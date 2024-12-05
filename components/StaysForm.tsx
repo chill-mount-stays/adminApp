@@ -59,102 +59,102 @@ const StaysForm = () => {
           <CardTitle>Add New Stay Vendor</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="flex lg:flex-row gap-8">
-            <div className="grid items-center gap-4 lg:w-[640px]">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Name *</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={stayForm.name}
-                  onChange={handleChange}
-                  placeholder="Name of your vendor stay"
-                  required
-                />
-              </div>
-              <div className="flex items-top justify-between space-x-4">
-                <div className="flex flex-col space-y-1.5 w-full">
-                  <Label htmlFor="price">Price Per Day *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    name="price"
-                    value={stayForm.price === 0 ? "" : stayForm.price}
-                    onChange={handleChange}
-                    placeholder="Cost per day"
-                    required
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5 max-w-fit">
-                  <Label htmlFor="availability">Availability*</Label>
-                  <Switch
-                    id="availability"
-                    name="availability"
-                    checked={stayForm.availability} // Bind to the current state
-                    onCheckedChange={(bool) => {
-                      console.log("Switch toggled:", bool); // Debug log
-                      setStayForm((prev) => {
-                        console.log("Previous state:", prev); // Debug log
-                        return { ...prev, availability: bool };
-                      });
-                    }}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="nextAvailability">Next Availability</Label>
-                <Input
-                  id="nextAvailability"
-                  type="text"
-                  name="nextAvailability"
-                  value={stayForm.nextAvailability}
-                  onChange={handleChange}
-                  placeholder="In hours & mins"
-                />
-              </div>
-              <div className="flex items-center justify-between space-x-4">
+          <form className="space-y-8">
+            <div className="flex lg:flex-row gap-8">
+              <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="roomsAvailable">Rooms Available</Label>
+                  <Label htmlFor="name">Name *</Label>
                   <Input
-                    id="roomsAvailable"
-                    type="number"
-                    name="roomsAvailable"
-                    value={
-                      stayForm.roomsAvailable === 0
-                        ? ""
-                        : stayForm.roomsAvailable
-                    }
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={stayForm.name}
                     onChange={handleChange}
-                    placeholder="No of rooms available now"
+                    placeholder="Name of your vendor stay"
                     required
                   />
+                </div>
+                <div className="flex items-top justify-between space-x-4">
+                  <div className="flex flex-col space-y-1.5 w-full">
+                    <Label htmlFor="price">Price Per Day *</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      name="price"
+                      value={stayForm.price === 0 ? "" : stayForm.price}
+                      onChange={handleChange}
+                      placeholder="Cost per day"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5 max-w-fit">
+                    <Label htmlFor="availability">Availability*</Label>
+                    <Switch
+                      id="availability"
+                      name="availability"
+                      checked={stayForm.availability}
+                      onCheckedChange={(bool) => {
+                        setStayForm((prev) => {
+                          return { ...prev, availability: bool };
+                        });
+                      }}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="rating">Rating</Label>
+                  <Label htmlFor="nextAvailability">Next Availability</Label>
                   <Input
-                    id="rating"
-                    type="number"
-                    name="rating"
-                    value={stayForm.rating === 0 ? "" : stayForm.rating}
+                    id="nextAvailability"
+                    type="text"
+                    name="nextAvailability"
+                    value={stayForm.nextAvailability}
                     onChange={handleChange}
-                    placeholder="1 | 2 | 3 | 4 | 5"
+                    placeholder="In hours & mins"
                   />
                 </div>
-              </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={stayForm.description}
-                  onChange={handleChange}
-                  placeholder="Mention AC/Non-AC, No of rooms, bed count, bathroom availability."
-                  required
-                />
-              </div>
-              <div className="flex items-center justify-between space-x-4">
+                <div className="flex items-center justify-between space-x-4">
+                  <div className="flex flex-col space-y-1.5 w-full">
+                    <Label htmlFor="roomsAvailable">Rooms Available</Label>
+                    <Input
+                      id="roomsAvailable"
+                      type="number"
+                      name="roomsAvailable"
+                      value={
+                        stayForm.roomsAvailable === 0
+                          ? ""
+                          : stayForm.roomsAvailable
+                      }
+                      onChange={handleChange}
+                      placeholder="No of rooms available now"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5 w-full">
+                    <Label htmlFor="rating">Rating</Label>
+                    <Input
+                      id="rating"
+                      type="number"
+                      name="rating"
+                      value={stayForm.rating === 0 ? "" : stayForm.rating}
+                      onChange={handleChange}
+                      placeholder="1 | 2 | 3 | 4 | 5"
+                      min={1}
+                      max={5}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    value={stayForm.description}
+                    onChange={handleChange}
+                    placeholder="Mention AC/Non-AC, No of rooms, bed count, bathroom availability."
+                    required
+                  />
+                </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="ownerName">Owner Name</Label>
                   <Input
@@ -166,25 +166,36 @@ const StaysForm = () => {
                     placeholder="Enter the owner name"
                   />
                 </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Owner Contact</Label>
-                  <Input
-                    id="ownerContact"
-                    type="text"
-                    name="ownerContact"
-                    value={stayVendorDetails.ownerContact}
-                    onChange={handleChange}
-                    placeholder="Owner contact"
-                    required
-                  />
+                <div className="flex items-center justify-between space-x-4">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="name">Owner Contact</Label>
+                    <Input
+                      id="ownerContact"
+                      type="text"
+                      name="ownerContact"
+                      value={stayVendorDetails.ownerContact}
+                      onChange={handleChange}
+                      placeholder="Owner contact"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col space-y-1.5 ">
+                    <Label htmlFor="receptionContact">Reception Contact</Label>
+                    <Input
+                      id="receptionContact"
+                      type="text"
+                      name="receptionContact"
+                      value={stayVendorDetails.receptionContact}
+                      onChange={handleChange}
+                      placeholder="Reception contact"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-between space-x-4">
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="address">Address</Label>
-                  <Input
+                  <Textarea
                     id="address"
-                    type="text"
                     name="address"
                     value={stayVendorDetails.address}
                     onChange={handleChange}
@@ -192,29 +203,17 @@ const StaysForm = () => {
                     required
                   />
                 </div>
-                <div className="flex flex-col space-y-1.5 ">
-                  <Label htmlFor="receptionContact">Reception Contact</Label>
-                  <Input
-                    id="receptionContact"
-                    type="text"
-                    name="receptionContact"
-                    value={stayVendorDetails.receptionContact}
-                    onChange={handleChange}
-                    placeholder="Reception contact"
-                    required
-                  />
-                </div>
+              </div>
+              <div className="flex items-center justify-center w-full border rounded-md">
+                Image Upload Area
               </div>
             </div>
-            <div className="flex items-center justify-center w-full border rounded-md">
-              Image Upload Area
+            <div className="flex justify-between">
+              <Button variant="outline">Cancel</Button>
+              <Button>Deploy</Button>
             </div>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Cancel</Button>
-          <Button>Deploy</Button>
-        </CardFooter>
       </Card>
     </div>
   );

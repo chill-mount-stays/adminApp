@@ -17,65 +17,52 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TravelVendor, TravelVendorDetails } from "@/type";
+import { Food, TravelVendor, TravelVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
 
-const TravelsForm = () => {
-  const InitialTravelForm: TravelVendor = {
-    vendorId: "",
+const FoodForm = () => {
+  const InitialFoodForm: Food = {
+    foodId: "",
     name: "",
-    travelOption: "Non-AC",
-    costPerDay: 0,
+    description: "",
+    price: 0,
+    imgUrls: [],
+    category: "Non-Veg",
     availability: false,
     nextAvailability: "",
-    imgUrls: [],
-    description: "",
     rating: 0,
+    tags: [],
   };
 
-  const InitialTravelDetails: TravelVendorDetails = {
-    vendorId: "",
-    ownerName: "",
-    ownerContact: "",
-    address: "",
-  };
-
-  const [travelForm, setTravelForm] = useState<TravelVendor>(InitialTravelForm);
-  const [travelVendorDetails, setTravelVendorDetails] =
-    useState<TravelVendorDetails>(InitialTravelDetails);
+  const [foodForm, setFoodForm] = useState<Food>(InitialFoodForm);
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setTravelForm((prevForm) => ({
+    setFoodForm((prevForm) => ({
       ...prevForm,
       [name]: value,
     }));
-    setTravelVendorDetails((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    console.log(travelForm);
-    console.log(travelVendorDetails);
+    console.log(foodForm);
   };
 
   return (
     <div>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Add New Travel Vendor</CardTitle>
+          <CardTitle>Add New Food</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-8">
             <div className="flex lg:flex-row gap-8">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Name *</Label>
+                  <Label htmlFor="name">Food Name *</Label>
                   <Input
                     id="name"
                     type="text"
                     name="name"
-                    value={travelForm.name}
+                    value={foodForm.name}
                     onChange={handleChange}
                     placeholder="Name of your vendor stay"
                     required
@@ -83,14 +70,12 @@ const TravelsForm = () => {
                 </div>
                 <div className="flex items-top justify-between space-x-4">
                   <div className="flex flex-col space-y-1.5 w-full">
-                    <Label htmlFor="costPerDay">Price Per Day *</Label>
+                    <Label htmlFor="price">Price per quantity*</Label>
                     <Input
-                      id="costPerDay"
+                      id="price"
                       type="number"
-                      name="costPerDay"
-                      value={
-                        travelForm.costPerDay === 0 ? "" : travelForm.costPerDay
-                      }
+                      name="price"
+                      value={foodForm.price === 0 ? "" : foodForm.price}
                       onChange={handleChange}
                       placeholder="Cost per day"
                       required
@@ -101,9 +86,9 @@ const TravelsForm = () => {
                     <Switch
                       id="availability"
                       name="availability"
-                      checked={travelForm.availability}
+                      checked={foodForm.availability}
                       onCheckedChange={(bool) => {
-                        setTravelForm((prev) => {
+                        setFoodForm((prev) => {
                           return { ...prev, availability: bool };
                         });
                       }}
@@ -117,18 +102,18 @@ const TravelsForm = () => {
                     id="nextAvailability"
                     type="text"
                     name="nextAvailability"
-                    value={travelForm.nextAvailability}
+                    value={foodForm.nextAvailability}
                     onChange={handleChange}
                     placeholder="In hours & mins"
                   />
                 </div>
                 <div className="flex items-center justify-between space-x-4">
                   <div className="flex flex-col space-y-1.5 w-1/2">
-                    <Label htmlFor="travelOption">Travel Option</Label>
+                    <Label htmlFor="travelOption">Food Option</Label>
                     <Select
-                      value={travelForm.travelOption}
-                      onValueChange={(val: "AC" | "Non-AC") => {
-                        setTravelForm({ ...travelForm, travelOption: val });
+                      value={foodForm.category}
+                      onValueChange={(val: "Veg" | "Non-Veg") => {
+                        setFoodForm({ ...foodForm, category: val });
                       }}
                       required
                     >
@@ -136,8 +121,8 @@ const TravelsForm = () => {
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="AC">AC</SelectItem>
-                        <SelectItem value="Non-AC">Non-AC</SelectItem>
+                        <SelectItem value="Veg">AC</SelectItem>
+                        <SelectItem value="Non-Veg">Non-AC</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -147,7 +132,7 @@ const TravelsForm = () => {
                       id="rating"
                       type="number"
                       name="rating"
-                      value={travelForm.rating === 0 ? "" : travelForm.rating}
+                      value={foodForm.rating === 0 ? "" : foodForm.rating}
                       onChange={handleChange}
                       placeholder="1 | 2 | 3 | 4 | 5"
                       min={1}
@@ -160,57 +145,32 @@ const TravelsForm = () => {
                   <Textarea
                     id="description"
                     name="description"
-                    value={travelForm.description}
+                    value={foodForm.description}
                     onChange={handleChange}
-                    placeholder="Mention AC/Non-AC, No of rooms, bed count, bathroom availability."
+                    placeholder="Mention Ingredients, Quantity in gm, etc.,"
                     required
                   />
                 </div>
-                <div className="flex items-center justify-between space-x-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="ownerName">Owner Name</Label>
-                    <Input
-                      id="ownerName"
-                      type="text"
-                      name="ownerName"
-                      value={travelVendorDetails.ownerName}
-                      onChange={handleChange}
-                      placeholder="Enter the owner name"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="name">Owner Contact</Label>
-                    <Input
-                      id="ownerContact"
-                      type="text"
-                      name="ownerContact"
-                      value={travelVendorDetails.ownerContact}
-                      onChange={handleChange}
-                      placeholder="Owner contact"
-                      required
-                    />
-                  </div>
-                </div>
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="tags">Tags</Label>
                   <Textarea
-                    id="address"
-                    name="address"
-                    value={travelVendorDetails.address}
+                    id="tags"
+                    name="tags"
+                    value={foodForm.tags}
                     onChange={handleChange}
-                    placeholder="Enter the address"
+                    placeholder="Owner contact"
                     required
                   />
                 </div>
               </div>
+
               <div className="flex items-center justify-center w-full border rounded-md">
                 Image Upload Area
               </div>
             </div>
             <div className="flex justify-between">
               <Button variant="outline">Cancel</Button>
-              <Button>Deploy</Button>
+              <Button type="submit">Deploy</Button>
             </div>
           </form>
         </CardContent>
@@ -219,4 +179,4 @@ const TravelsForm = () => {
   );
 };
 
-export default TravelsForm;
+export default FoodForm;

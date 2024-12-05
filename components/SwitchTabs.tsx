@@ -3,6 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils, faCar, faHotel } from "@fortawesome/free-solid-svg-icons";
 import StaysForm from "./StaysForm";
+import TravelsForm from "./TravelsForm";
+import FoodForm from "./FoodForm";
 const SwitchTabs = () => {
   const tabs = [
     { name: "Stays", value: "stays", icon: faHotel, counts: 100 },
@@ -40,8 +42,12 @@ const SwitchTabs = () => {
         <TabsContent value="stays">
           <StaysForm />
         </TabsContent>
-        <TabsContent value="travels">Change your password here.</TabsContent>
-        <TabsContent value="foods">Change your password here.</TabsContent>
+        <TabsContent value="travels">
+          <TravelsForm />
+        </TabsContent>
+        <TabsContent value="foods">
+          <FoodForm />
+        </TabsContent>
       </Tabs>
     </div>
   );

@@ -20,20 +20,21 @@ export interface StayVendorDetails extends VendorDetails {
   receptionContact: string;
 }
 
-export interface CarVendor {
+export interface TravelVendor {
   vendorId: string;
   name: string;
-  carOption: "AC" | "Non-AC";
+  travelOption: "AC" | "Non-AC";
   costPerDay: number;
   availability: boolean;
   nextAvailability?: string;
   imgUrls: string[];
+  description?: string;
   rating?: number;
 }
 
-export interface CarVendorDetails extends VendorDetails {
-  driverName: string;
-  driverContact: string;
+export interface TravelVendorDetails extends VendorDetails {
+  driverName?: string;
+  driverContact?: string;
   driverLicense?: string;
 }
 
@@ -42,7 +43,7 @@ export interface Food {
   name: string;
   description: string;
   price: number;
-  imgUrl: string;
+  imgUrls: string[];
   category: "Veg" | "Non-Veg";
   availability: boolean;
   nextAvailability?: string;
