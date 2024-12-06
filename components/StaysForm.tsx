@@ -41,7 +41,7 @@ const StaysForm = () => {
   const [images, setImages] = useState<
     { imageId: string; firebaseUrl: string }[]
   >([]);
-
+  const [disableDeploy, setDisableDeploy] = useState(false);
   useEffect(() => {
     setStayForm((prev) => ({ ...prev, imgUrls: [...prev.imgUrls, ...images] }));
   }, [images]);
@@ -213,12 +213,16 @@ const StaysForm = () => {
                 </div>
               </div>
               <div className="p-5 w-full border rounded-md">
-                <ImageUpload setFormImages={setImages} />
+                <ImageUpload
+                  setDisableDeploy={setDisableDeploy}
+                  setFormImages={setImages}
+                />
               </div>
             </div>
             <div className="flex justify-between">
               <Button variant="outline">Cancel</Button>
               <Button
+                disabled={disableDeploy}
                 onClick={(e) => {
                   e.preventDefault();
                   console.log("~>", stayForm);
