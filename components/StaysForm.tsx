@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { StayVendor, StayVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
+import { ImageUpload } from "./ImageUpload";
 
 const StaysForm = () => {
   const InitialStayForm: StayVendor = {
@@ -37,6 +38,13 @@ const StaysForm = () => {
   const [stayForm, setStayForm] = useState<StayVendor>(InitialStayForm);
   const [stayVendorDetails, setStayVendorDetails] =
     useState<StayVendorDetails>(InitialStayDetails);
+  const [images, setImages] = useState<
+    { imageId: string; firebaseUrl: string }[]
+  >([]);
+
+  useEffect(() => {
+    setStayForm((prev) => ({ ...prev, imgUrls: [...prev.imgUrls, ...images] }));
+  }, [images]);
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -204,13 +212,20 @@ const StaysForm = () => {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-center w-full border rounded-md">
-                Image Upload Area
+              <div className="p-5 w-full border rounded-md">
+                <ImageUpload setFormImages={setImages} />
               </div>
             </div>
             <div className="flex justify-between">
               <Button variant="outline">Cancel</Button>
-              <Button>Deploy</Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("~>", stayForm);
+                }}
+              >
+                Deploy
+              </Button>
             </div>
           </form>
         </CardContent>
