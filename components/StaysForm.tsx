@@ -14,10 +14,16 @@ import { StayVendor, StayVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
 import { ImageUpload } from "./ImageUpload";
+import { addFormData, generateDocRef } from "@/app/action";
+import { DocumentReference } from "firebase/firestore";
 
 const StaysForm = () => {
+  const [docRef, setDocRef] = useState<DocumentReference>(
+    generateDocRef("Stays")
+  );
+
   const InitialStayForm: StayVendor = {
-    vendorId: "",
+    vendorId: docRef.id,
     name: "",
     price: 0,
     availability: false,
@@ -27,15 +33,15 @@ const StaysForm = () => {
     description: "",
     rating: 0,
   };
+  const [stayForm, setStayForm] = useState<StayVendor>(InitialStayForm);
   const InitialStayDetails: StayVendorDetails = {
-    vendorId: "",
+    vendorId: stayForm.vendorId,
     ownerName: "",
     ownerContact: "",
     address: "",
     receptionContact: "",
   };
 
-  const [stayForm, setStayForm] = useState<StayVendor>(InitialStayForm);
   const [stayVendorDetails, setStayVendorDetails] =
     useState<StayVendorDetails>(InitialStayDetails);
   const [images, setImages] = useState<
@@ -52,12 +58,29 @@ const StaysForm = () => {
       ...prevForm,
       [name]: value,
     }));
+  };
+  const handleChnageVendorDetails = (e: any) => {
+    const { name, value } = e.target;
     setStayVendorDetails((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFormSubmit = (e: any) => {
+    e.preventDefault;
+    addFormData(docRef, stayForm, stayVendorDetails);
     console.log(stayForm);
     console.log(stayVendorDetails);
+  };
+
+  const handleFormReset = () => {
+    setDocRef(generateDocRef("Stays"));
+    setStayForm({ ...InitialStayForm, vendorId: docRef.id });
+    setStayVendorDetails({
+      ...InitialStayDetails,
+      vendorId: stayForm.vendorId,
+    });
   };
 
   return (
@@ -67,7 +90,7 @@ const StaysForm = () => {
           <CardTitle>Add New Stay Vendor</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-8">
+          <form className="space-y-8" action={(e) => handleFormSubmit(e)}>
             <div className="flex lg:flex-row gap-8">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
@@ -170,7 +193,7 @@ const StaysForm = () => {
                     type="text"
                     name="ownerName"
                     value={stayVendorDetails.ownerName}
-                    onChange={handleChange}
+                    onChange={handleChnageVendorDetails}
                     placeholder="Enter the owner name"
                   />
                 </div>
@@ -182,7 +205,7 @@ const StaysForm = () => {
                       type="text"
                       name="ownerContact"
                       value={stayVendorDetails.ownerContact}
-                      onChange={handleChange}
+                      onChange={handleChnageVendorDetails}
                       placeholder="Owner contact"
                       required
                     />
@@ -194,7 +217,7 @@ const StaysForm = () => {
                       type="text"
                       name="receptionContact"
                       value={stayVendorDetails.receptionContact}
-                      onChange={handleChange}
+                      onChange={handleChnageVendorDetails}
                       placeholder="Reception contact"
                       required
                     />
@@ -206,7 +229,7 @@ const StaysForm = () => {
                     id="address"
                     name="address"
                     value={stayVendorDetails.address}
-                    onChange={handleChange}
+                    onChange={handleChnageVendorDetails}
                     placeholder="Enter the address"
                     required
                   />
@@ -220,15 +243,11 @@ const StaysForm = () => {
               </div>
             </div>
             <div className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button
-                disabled={disableDeploy}
-                onClick={(e) => {
-                  e.preventDefault();
-                  console.log("~>", stayForm);
-                }}
-              >
-                Deploy
+              <Button variant="outline" onClick={handleFormReset}>
+                Cancel
+              </Button>
+              <Button disabled={disableDeploy} type="submit">
+                Submit
               </Button>
             </div>
           </form>

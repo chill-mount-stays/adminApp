@@ -20,10 +20,11 @@ import { Label } from "@/components/ui/label";
 import { TravelVendor, TravelVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
+import { generateDocRef } from "@/app/action";
 
 const TravelsForm = () => {
   const InitialTravelForm: TravelVendor = {
-    vendorId: "",
+    vendorId: generateDocRef("Travels").id,
     name: "",
     travelOption: "Non-AC",
     costPerDay: 0,
@@ -33,15 +34,15 @@ const TravelsForm = () => {
     description: "",
     rating: 0,
   };
+  const [travelForm, setTravelForm] = useState<TravelVendor>(InitialTravelForm);
 
   const InitialTravelDetails: TravelVendorDetails = {
-    vendorId: "",
+    vendorId: travelForm.vendorId,
     ownerName: "",
     ownerContact: "",
     address: "",
   };
 
-  const [travelForm, setTravelForm] = useState<TravelVendor>(InitialTravelForm);
   const [travelVendorDetails, setTravelVendorDetails] =
     useState<TravelVendorDetails>(InitialTravelDetails);
 

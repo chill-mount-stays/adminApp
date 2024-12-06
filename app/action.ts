@@ -1,5 +1,12 @@
-import { storage } from "@/lib/firebase";
-import { ImageFile } from "@/type";
+import { db, storage } from "@/lib/firebase";
+import { ImageFile, StayVendor, StayVendorDetails } from "@/type";
+import {
+  addDoc,
+  collection,
+  doc,
+  DocumentReference,
+  setDoc,
+} from "firebase/firestore";
 import {
   getStorage,
   ref,
@@ -7,6 +14,26 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+
+export const generateDocRef = (colletionName: string): DocumentReference => {
+  const newDocRef = doc(collection(db, colletionName));
+  return newDocRef;
+};
+
+export const addFormData = async (
+  docRef: DocumentReference,
+  clientData: StayVendor,
+  adminData: StayVendorDetails
+) => {
+  try {
+    await setDoc(docRef, clientData);
+    const newDocRef = await addDoc(collection(db, "Vendors"), adminData);
+    console.log(newDocRef.id);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export const uploadImageToFirebase = (image: File) => {
   const storagePath = `images/${image.name}-${Date.now()}`;
   const storageRef = ref(storage, storagePath);
