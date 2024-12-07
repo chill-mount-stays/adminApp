@@ -44,10 +44,14 @@ const StaysForm = () => {
 
   const [stayVendorDetails, setStayVendorDetails] =
     useState<StayVendorDetails>(InitialStayDetails);
+
   const [images, setImages] = useState<
     { imageId: string; firebaseUrl: string }[]
   >([]);
+
   const [disableDeploy, setDisableDeploy] = useState(false);
+  const [resetForm, setResetForm] = useState(false);
+
   useEffect(() => {
     setStayForm((prev) => ({ ...prev, imgUrls: [...prev.imgUrls, ...images] }));
   }, [images]);
@@ -75,6 +79,7 @@ const StaysForm = () => {
   };
 
   const handleFormReset = () => {
+    setResetForm(true);
     setDocRef(generateDocRef("Stays"));
     setStayForm({ ...InitialStayForm, vendorId: docRef.id });
     setStayVendorDetails({
@@ -239,6 +244,9 @@ const StaysForm = () => {
                 <ImageUpload
                   setDisableDeploy={setDisableDeploy}
                   setFormImages={setImages}
+                  resetForm={resetForm}
+                  setResetForm={setResetForm}
+                  parentCalledFrom="stays"
                 />
               </div>
             </div>

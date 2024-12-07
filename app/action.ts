@@ -34,8 +34,11 @@ export const addFormData = async (
   }
 };
 
-export const uploadImageToFirebase = (image: File) => {
-  const storagePath = `images/${image.name}-${Date.now()}`;
+export const uploadImageToFirebase = (
+  image: File,
+  parentCalledFrom: string
+) => {
+  const storagePath = `images/${parentCalledFrom}/${image.name}-${Date.now()}`;
   const storageRef = ref(storage, storagePath);
 
   return {
@@ -46,7 +49,7 @@ export const uploadImageToFirebase = (image: File) => {
       })
       .catch((error) => {
         console.error(`Error uploading image ${image.name}:`, error);
-        return ""; // Return empty URL on error
+        return "";
       }),
   };
 };

@@ -9,6 +9,9 @@ import { ChangeEvent, useEffect, useState } from "react";
 export const ImageUpload = ({
   setFormImages,
   setDisableDeploy,
+  resetForm = false,
+  setResetForm,
+  parentCalledFrom = "stays",
 }: {
   setFormImages: React.Dispatch<
     React.SetStateAction<
@@ -19,6 +22,9 @@ export const ImageUpload = ({
     >
   >;
   setDisableDeploy: React.Dispatch<React.SetStateAction<boolean>>;
+  setResetForm: React.Dispatch<React.SetStateAction<boolean>>;
+  resetForm?: boolean;
+  parentCalledFrom?: string;
 }) => {
   const [images, setImages] = useState<ImageFile[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -38,12 +44,40 @@ export const ImageUpload = ({
     });
     setFormImages(imagesWithURLS);
   }, [imageUrls]);
+
+  const resetImages = async () => {
+    const promiseArray: Promise<void>[] = [];
+    images.forEach(async (image, _idx) => {
+      promiseArray.push(removeImage(_idx, image));
+    });
+    Promise.all(promiseArray)
+      .then(() => {
+        setDisableDeploy(false);
+        setResetForm(false);
+      })
+      .catch((e) => {
+        console.error("error in removing images", e);
+        setResetForm(false);
+        setDisableDeploy(false);
+      });
+  };
+
+  useEffect(() => {
+    if (resetForm) {
+      setDisableDeploy(true);
+      resetImages();
+    }
+  }, [resetForm]);
+
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setDisableDeploy(true);
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
     const updatedImages: ImageFile[] = files.map((file) => {
-      const { storagePath, firebaseUrl } = uploadImageToFirebase(file);
+      const { storagePath, firebaseUrl } = uploadImageToFirebase(
+        file,
+        parentCalledFrom
+      );
       uploadPromises.push(firebaseUrl);
       return Object.assign(file, {
         preview: URL.createObjectURL(file),
@@ -60,7 +94,10 @@ export const ImageUpload = ({
     if (!e.dataTransfer.files) return;
     const files = Array.from(e.dataTransfer.files);
     const updatedImages: ImageFile[] = files.map((file) => {
-      const { storagePath, firebaseUrl } = uploadImageToFirebase(file);
+      const { storagePath, firebaseUrl } = uploadImageToFirebase(
+        file,
+        parentCalledFrom
+      );
       uploadPromises.push(firebaseUrl);
       return Object.assign(file, {
         preview: URL.createObjectURL(file),
