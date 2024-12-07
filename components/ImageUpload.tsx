@@ -52,6 +52,8 @@ export const ImageUpload = ({
     });
     Promise.all(promiseArray)
       .then(() => {
+        setImageUrls([]);
+        setImages([]);
         setDisableDeploy(false);
         setResetForm(false);
       })
