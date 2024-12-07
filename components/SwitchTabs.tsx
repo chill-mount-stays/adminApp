@@ -13,7 +13,7 @@ const SwitchTabs = () => {
   ];
   return (
     <div>
-      <Tabs defaultValue="account" className=" w-full">
+      <Tabs defaultValue="stays" className=" w-full">
         <div className="block w-full border  bg-white lg:space-y-4 space-y-2 rounded-md">
           <p className="lg:text-lg font-medium lg:pt-4 lg:pl-4 pt-2 pl-2 text-sm">
             Vendor Type

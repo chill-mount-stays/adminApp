@@ -96,7 +96,7 @@ const StaysForm = () => {
         </CardHeader>
         <CardContent>
           <form className="space-y-8" action={(e) => handleFormSubmit(e)}>
-            <div className="flex lg:flex-row gap-8">
+            <div className="flex lg:flex-row gap-8 items-start">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="name">Name *</Label>
@@ -240,7 +240,7 @@ const StaysForm = () => {
                   />
                 </div>
               </div>
-              <div className="p-5 w-full border rounded-md">
+              <div className="w-full">
                 <ImageUpload
                   setDisableDeploy={setDisableDeploy}
                   setFormImages={setImages}

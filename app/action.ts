@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   DocumentReference,
+  getDocs,
   setDoc,
 } from "firebase/firestore";
 import {
@@ -19,6 +20,8 @@ export const generateDocRef = (colletionName: string): DocumentReference => {
   const newDocRef = doc(collection(db, colletionName));
   return newDocRef;
 };
+
+//Post Functions
 
 export const addFormData = async (
   docRef: DocumentReference,
@@ -53,6 +56,21 @@ export const uploadImageToFirebase = (
       }),
   };
 };
+
+//Get Functions
+
+export const getData = async (collectionName: string) => {
+  const querySnapshot = await getDocs(collection(db, collectionName));
+  const data: any = [];
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    data.push(doc.data());
+    console.log(doc.id, " => ", doc.data());
+  });
+  return data;
+};
+
+//Delete Functions
 
 export const removeImageFromFirebase = async (storagePath: string) => {
   const storageRef = ref(storage, storagePath);

@@ -3,8 +3,18 @@ import { removeImageFromFirebase, uploadImageToFirebase } from "@/app/action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ImageFile } from "@/type";
+import { CloudUploadIcon } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "./ui/card";
+import ImagePreview from "./ImagePreview";
 
 export const ImageUpload = ({
   setFormImages,
@@ -91,7 +101,7 @@ export const ImageUpload = ({
     setImageUrls((prev) => [...prev, ...urls]);
     setDisableDeploy(false);
   };
-  const handleImagesDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleImagesDrop = async (e: React.DragEvent<SVGSVGElement>) => {
     setDisableDeploy(true);
     if (!e.dataTransfer.files) return;
     const files = Array.from(e.dataTransfer.files);
@@ -123,79 +133,62 @@ export const ImageUpload = ({
     }
     setDisableDeploy(false);
   };
+
   return (
-    <div>
+    <div className="h-full">
       {
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex flex-col w-full  items-center justify-center gap-1.5">
-            <p>{imageUrls.length} Images uploaded</p>
-            <Label
-              className="cursor-pointer text-center border-blue-950 border-2 p-2 rounded-lg"
-              htmlFor="picture"
-            >
-              Click to upload
-            </Label>
-            <Input
-              onChange={handleImageChange}
-              className="cursor-pointer hidden"
-              multiple
-              id="picture"
-              type="file"
+        <div className="flex flex-col items-center gap-8 h-full">
+          <Card className="w-full border-0 rounded-none shadow-none">
+            <CardContent className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg p-10 space-y-6">
+              <p className=" text-muted-foreground text-sm">
+                Drag and drop your images or click the button below to select
+                files.
+              </p>
+              <CloudUploadIcon
+                className="w-16 h-16 text-zinc-500 dark:text-zinc-400"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setFileEnter(true);
+                }}
+                onDragLeave={(e) => {
+                  setFileEnter(false);
+                }}
+                onDragEnd={(e) => {
+                  e.preventDefault();
+                  setFileEnter(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setFileEnter(false);
+                  handleImagesDrop(e);
+                }}
+              />
+              <Label
+                className="cursor-pointer text-center border py-2.5 px-4 rounded-md shadow-sm hover:bg-zinc-50"
+                htmlFor="picture"
+              >
+                Select Files
+              </Label>
+              <Input
+                onChange={handleImageChange}
+                className="cursor-pointer hidden"
+                multiple
+                id="picture"
+                type="file"
+              />
+            </CardContent>
+          </Card>
+          {images.length ? (
+            <ImagePreview
+              images={images}
+              imageUrls={imageUrls}
+              removeImage={removeImage}
             />
-            <div
-              className="w-full border bottom-2 h-36 flex items-center justify-center border-dotted border-gray-800 border-opacity-50"
-              onDragOver={(e) => {
-                e.preventDefault();
-                setFileEnter(true);
-              }}
-              onDragLeave={(e) => {
-                setFileEnter(false);
-              }}
-              onDragEnd={(e) => {
-                e.preventDefault();
-                setFileEnter(false);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                setFileEnter(false);
-                handleImagesDrop(e);
-              }}
-            >
-              {fileEnter ? "DROP" : "Drop images here"}
-            </div>
-          </div>
+          ) : (
+            <></>
+          )}
         </div>
       }
-      {images.length ? (
-        <div>
-          {images.map((image, _idx) => {
-            return (
-              <div
-                key={`Image__${_idx}`}
-                onClick={() => {
-                  removeImage(_idx, image);
-                }}
-                className="w-[100px] h-[80px] relative overflow-hidden rounded-3xl border-white border-4 border-solid drop-shadow-xl cursor-pointer"
-              >
-                <Image
-                  className="w-full h-full object-contain absolute"
-                  width={1000}
-                  height={1000}
-                  alt={image.name}
-                  src={image.preview}
-                />
-                {!imageUrls[_idx] ? (
-                  <div className="absolute inset-0 bg-red-500 bg-opacity-50"></div>
-                ) : (
-                  <></>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <></>
-      )}
     </div>
   );
 };
