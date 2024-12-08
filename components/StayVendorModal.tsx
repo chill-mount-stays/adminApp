@@ -13,23 +13,24 @@ import { ImageCarousel } from "./ImageCarousel";
 import { useRouter } from "next/navigation";
 
 interface StayVendorModalProps {
+  type: string;
   vendor: StayVendor | TravelVendor | Food;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function StayVendorModal({
+  type,
   vendor,
   isOpen,
   onClose,
 }: StayVendorModalProps) {
   const router = useRouter();
 
-  const isStayVendor = (vendor: any): vendor is StayVendor =>
-    vendor.type === "stay";
+  const isStayVendor = (vendor: any): vendor is StayVendor => type === "stay";
   const isTravelVendor = (vendor: any): vendor is TravelVendor =>
-    vendor.type === "travel";
-  const isFood = (vendor: any): vendor is Food => vendor.type === "food";
+    type === "travel";
+  const isFood = (vendor: any): vendor is Food => type === "food";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

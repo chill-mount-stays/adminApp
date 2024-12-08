@@ -245,6 +245,7 @@ const TravelsForm = () => {
               </div>
               <div className="w-full">
                 <ImageUpload
+                  initialImages={images}
                   setDisableDeploy={setDisableDeploy}
                   setFormImages={setImages}
                   resetForm={resetForm}

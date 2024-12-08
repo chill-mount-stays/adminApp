@@ -11,7 +11,7 @@ const page = async () => {
       {Object.entries(vendorsData).length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {vendorsData.map((vendor: Food) => (
-            <StayVendorCard key={vendor.foodId} vendor={vendor} />
+            <StayVendorCard key={vendor.foodId} vendor={vendor} type="food" />
           ))}
         </div>
       ) : (

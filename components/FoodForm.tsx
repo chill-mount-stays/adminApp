@@ -194,6 +194,7 @@ const FoodForm = () => {
 
               <div className="w-full">
                 <ImageUpload
+                  initialImages={images}
                   setDisableDeploy={setDisableDeploy}
                   setFormImages={setImages}
                   resetForm={resetForm}

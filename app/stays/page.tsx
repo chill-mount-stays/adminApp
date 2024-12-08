@@ -12,7 +12,7 @@ const page = async () => {
       {Object.entries(vendorsData).length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {vendorsData.map((vendor: StayVendor) => (
-            <StayVendorCard key={vendor.vendorId} vendor={vendor} />
+            <StayVendorCard key={vendor.vendorId} vendor={vendor} type="stay" />
           ))}
         </div>
       ) : (

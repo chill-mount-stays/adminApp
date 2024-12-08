@@ -11,17 +11,18 @@ import StaysForm from "./StaysForm";
 
 export function StayVendorCard({
   vendor,
+  type,
 }: {
   vendor: StayVendor | TravelVendor | Food;
+  type: string;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   console.log(vendor);
 
-  const isStayVendor = (vendor: any): vendor is StayVendor =>
-    vendor.type === "stay";
+  const isStayVendor = (vendor: any): vendor is StayVendor => type === "stay";
   const isTravelVendor = (vendor: any): vendor is TravelVendor =>
-    vendor.type === "travel";
-  const isFood = (vendor: any): vendor is Food => vendor.type === "food";
+    type === "travel";
+  const isFood = (vendor: any): vendor is Food => type === "food";
 
   return (
     <>
@@ -71,6 +72,7 @@ export function StayVendorCard({
         </CardContent>
       </Card>
       <StayVendorModal
+        type={type}
         vendor={vendor}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
