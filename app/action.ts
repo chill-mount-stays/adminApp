@@ -14,7 +14,9 @@ import {
   DocumentReference,
   getDoc,
   getDocs,
+  query,
   setDoc,
+  where,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -37,9 +39,9 @@ export const addFormData = async (
   adminData: StayVendorDetails | TravelVendorDetails
 ) => {
   try {
-    await setDoc(docRef, clientData);
-    const newDocRef = await addDoc(collection(db, "Vendors"), adminData);
-    console.log(newDocRef.id);
+    const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
+    await setDoc(docRef, { ...clientData, vendorsRefId: newVendorsRef.id });
+    console.log(newVendorsRef.id);
   } catch (e) {
     console.error(e);
   }
@@ -94,7 +96,10 @@ export const getVendorDetails = async (id: string, collectionName: string) => {
 
   if (docSnap.exists()) {
     console.log("Document data:", docSnap.data());
-    return docSnap.data();
+    const docVendorRef = doc(db, collectionName, id);
+    const docVendorSnap = await getDoc(docVendorRef);
+    const responseData = { ...docSnap.data(), ...docVendorSnap.data() }; //here i want to combine both vendorResource and VendorDetails
+    return responseData;
   } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
