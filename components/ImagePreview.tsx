@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { ImageFile } from "@/type";
+import { DBImageFile, ImageFile } from "@/type";
 import {
   Carousel,
   CarouselContent,
@@ -17,14 +17,12 @@ import {
 // }
 
 interface ImagePreviewProps {
-  images?: ImageFile[];
-  imageUrls?: string[];
-  removeImage: (index: number, image: ImageFile) => Promise<void>;
+  images?: DBImageFile[];
+  removeImage: (index: number, imageId: string) => Promise<void>;
 }
 
 export default function ImagePreview({
   images = [],
-  imageUrls = [],
   removeImage,
 }: ImagePreviewProps) {
   if (!images || images.length === 0) return null;
@@ -35,12 +33,12 @@ export default function ImagePreview({
         {images.map((image, index) => (
           <CarouselItem
             key={`Image__${index}`}
-            onClick={() => removeImage(index, image)}
+            onClick={() => removeImage(index, image.imageId)}
           >
             <div className="w-full border relative aspect-square">
               <Image
-                src={image.preview}
-                alt={image.name}
+                src={image.firebaseUrl}
+                alt={image.imageId}
                 layout="fill"
                 objectFit="contain"
               />

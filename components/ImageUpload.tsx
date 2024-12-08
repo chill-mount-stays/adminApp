@@ -2,7 +2,7 @@
 import { removeImageFromFirebase, uploadImageToFirebase } from "@/app/action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ImageFile } from "@/type";
+import { DBImageFile, ImageFile } from "@/type";
 import { CloudUploadIcon } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -17,27 +17,26 @@ import {
 import ImagePreview from "./ImagePreview";
 
 export const ImageUpload = ({
+  initialImages,
   setFormImages,
   setDisableDeploy,
   resetForm = false,
   setResetForm,
   parentCalledFrom = "stays",
 }: {
-  setFormImages: React.Dispatch<
-    React.SetStateAction<
-      {
-        imageId: string;
-        firebaseUrl: string;
-      }[]
-    >
-  >;
+  initialImages: DBImageFile[];
+  setFormImages: React.Dispatch<React.SetStateAction<DBImageFile[]>>;
   setDisableDeploy: React.Dispatch<React.SetStateAction<boolean>>;
   setResetForm: React.Dispatch<React.SetStateAction<boolean>>;
   resetForm?: boolean;
   parentCalledFrom?: string;
 }) => {
-  const [images, setImages] = useState<ImageFile[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageFile[] | DBImageFile[]>(
+    initialImages ?? []
+  );
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    initialImages.map((image) => image.firebaseUrl) ?? []
+  );
   const [fileEnter, setFileEnter] = useState<boolean>(false);
   const uploadPromises: Promise<string>[] = [];
 
@@ -48,7 +47,7 @@ export const ImageUpload = ({
     }[] = [];
     images.forEach((image, _idx) => {
       imagesWithURLS.push({
-        imageId: image.storagePath,
+        imageId: image.imageId,
         firebaseUrl: imageUrls[_idx],
       });
     });
@@ -58,7 +57,7 @@ export const ImageUpload = ({
   const resetImages = async () => {
     const promiseArray: Promise<void>[] = [];
     images.forEach(async (image, _idx) => {
-      promiseArray.push(removeImage(_idx, image));
+      promiseArray.push(removeImage(_idx, image.imageId));
     });
     Promise.all(promiseArray)
       .then(() => {
@@ -92,8 +91,8 @@ export const ImageUpload = ({
       );
       uploadPromises.push(firebaseUrl);
       return Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        storagePath: storagePath,
+        firebaseUrl: URL.createObjectURL(file),
+        imageId: storagePath,
       });
     });
     setImages((prev) => [...prev, ...updatedImages]);
@@ -112,8 +111,8 @@ export const ImageUpload = ({
       );
       uploadPromises.push(firebaseUrl);
       return Object.assign(file, {
-        preview: URL.createObjectURL(file),
-        storagePath: storagePath,
+        firebaseUrl: URL.createObjectURL(file),
+        imageId: storagePath,
       });
     });
     setImages((prev) => [...prev, ...updatedImages]);
@@ -122,11 +121,9 @@ export const ImageUpload = ({
     setDisableDeploy(false);
   };
 
-  const removeImage = async (index: number, image: ImageFile) => {
+  const removeImage = async (index: number, imageId: string) => {
     setDisableDeploy(true);
-    const removeImageStatusCode = await removeImageFromFirebase(
-      image.storagePath
-    );
+    const removeImageStatusCode = await removeImageFromFirebase(imageId);
     if (!removeImageStatusCode) {
       setImages((prev) => prev.filter((_, i) => i !== index));
       setImageUrls((prev) => prev.filter((_, i) => i !== index));
@@ -179,11 +176,7 @@ export const ImageUpload = ({
             </CardContent>
           </Card>
           {images.length ? (
-            <ImagePreview
-              images={images}
-              imageUrls={imageUrls}
-              removeImage={removeImage}
-            />
+            <ImagePreview images={images} removeImage={removeImage} />
           ) : (
             <></>
           )}

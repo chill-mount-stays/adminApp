@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { StayVendor, StayVendorDetails } from "@/type";
+import { DBImageFile, ImageFile, StayVendor, StayVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
 import { ImageUpload } from "./ImageUpload";
@@ -47,9 +47,7 @@ const StaysForm = ({ formData }: any) => {
   const [stayVendorDetails, setStayVendorDetails] =
     useState<StayVendorDetails>(InitialStayDetails);
 
-  const [images, setImages] = useState<
-    { imageId: string; firebaseUrl: string }[]
-  >(stayForm.imgUrls ?? []);
+  const [images, setImages] = useState<DBImageFile[]>(formData?.imgUrls ?? []);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
   const [resetForm, setResetForm] = useState(false);
@@ -254,6 +252,7 @@ const StaysForm = ({ formData }: any) => {
               </div>
               <div className="w-full">
                 <ImageUpload
+                  initialImages={images}
                   setDisableDeploy={setDisableDeploy}
                   setFormImages={setImages}
                   resetForm={resetForm}

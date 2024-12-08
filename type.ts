@@ -11,7 +11,7 @@ export interface StayVendor {
   availability: boolean;
   nextAvailability?: string;
   roomsAvailable?: number;
-  imgUrls: { imageId: string; firebaseUrl: string }[];
+  imgUrls: DBImageFile[];
   description?: string;
   rating?: number;
 }
@@ -52,6 +52,10 @@ export interface Food {
 }
 
 export interface ImageFile extends File {
-  preview: string;
-  storagePath: string;
+  firebaseUrl: string;
+  imageId: string;
+}
+export interface DBImageFile {
+  firebaseUrl: string;
+  imageId: string;
 }
