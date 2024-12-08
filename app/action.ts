@@ -16,6 +16,7 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import {
@@ -36,11 +37,29 @@ export const generateDocRef = (colletionName: string): DocumentReference => {
 export const addFormData = async (
   docRef: DocumentReference,
   clientData: StayVendor | TravelVendor,
-  adminData: StayVendorDetails | TravelVendorDetails
+  adminData: StayVendorDetails | TravelVendorDetails,
+  collectionName: string
 ) => {
   try {
-    const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
-    await setDoc(docRef, { ...clientData, vendorsRefId: newVendorsRef.id });
+    if (!clientData.vendorsRefId) {
+      const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
+      await setDoc(docRef, {
+        ...clientData,
+        vendorsRefId: newVendorsRef.id,
+      });
+    } else {
+      const docVendorRefId = clientData.vendorsRefId;
+      const docVendorOwnerRef = doc(collection(db, "Vendors"), docVendorRefId);
+      const docVendorRef = doc(
+        collection(db, collectionName),
+        clientData.vendorId
+      );
+      const updatedAdminData = { ...adminData };
+      const updatedClientData = { ...clientData };
+      await setDoc(docVendorOwnerRef, adminData);
+      await setDoc(docVendorRef, clientData);
+      console.log(docVendorRef, docRef);
+    }
     return 0;
   } catch (e) {
     console.error(e);
@@ -98,11 +117,15 @@ export const getVendorDetails = async (id: string, collectionName: string) => {
   const docSnap = await getDoc(docRef);
 
   if (docSnap.exists()) {
-    console.log("Document data:", docSnap.data());
-    const docVendorRef = doc(db, collectionName, docSnap.data().vendorId);
+    // console.log("Document data:", docSnap.data());
+    const vendorsRefId = docSnap.data()?.vendorsRefId;
+    const docVendorRef = doc(db, "Vendors", vendorsRefId);
     const docVendorSnap = await getDoc(docVendorRef);
-    const responseData = { ...docSnap.data(), ...docVendorSnap.data() }; //here i want to combine both vendorResource and VendorDetails
-    return responseData;
+    // const responseData = { ...docSnap.data(), ...docVendorSnap.data() }; //here i want to combine both vendorResource and VendorDetails
+    // console.log("responseData => ", responseData);
+    const vendorData = docSnap.data();
+    const vendorDetailsData = docVendorSnap.data();
+    return { vendorData, vendorDetailsData };
   } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");

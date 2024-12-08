@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TravelVendor, TravelVendorDetails } from "@/type";
+import { DBImageFile, TravelVendor, TravelVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
 import { addFormData, generateDocRef } from "@/app/action";
@@ -19,7 +19,7 @@ import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 
-const TravelsForm = () => {
+const TravelsForm = ({ formData, vendorDetailsData }: any) => {
   const { toast } = useToast();
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Travels")
@@ -35,7 +35,9 @@ const TravelsForm = () => {
     description: "",
     rating: 0,
   };
-  const [travelForm, setTravelForm] = useState<TravelVendor>(InitialTravelForm);
+  const [travelForm, setTravelForm] = useState<TravelVendor>(
+    formData ?? InitialTravelForm
+  );
 
   const InitialTravelDetails: TravelVendorDetails = {
     vendorId: travelForm.vendorId,
@@ -45,11 +47,9 @@ const TravelsForm = () => {
   };
 
   const [travelVendorDetails, setTravelVendorDetails] =
-    useState<TravelVendorDetails>(InitialTravelDetails);
+    useState<TravelVendorDetails>(vendorDetailsData ?? InitialTravelDetails);
 
-  const [images, setImages] = useState<
-    { imageId: string; firebaseUrl: string }[]
-  >([]);
+  const [images, setImages] = useState<DBImageFile[]>(formData?.imgUrls ?? []);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
   const [resetForm, setResetForm] = useState<number>(0);
@@ -57,8 +57,9 @@ const TravelsForm = () => {
   useEffect(() => {
     setTravelForm((prev) => ({
       ...prev,
-      imgUrls: [...prev.imgUrls, ...images],
+      imgUrls: [...images],
     }));
+    console.log(images);
   }, [images]);
 
   const handleChnageVendorDetails = (
@@ -84,12 +85,13 @@ const TravelsForm = () => {
   };
 
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault;
+    e.preventDefault();
     setDisableDeploy(true);
     const submitData = await addFormData(
       docRef,
       travelForm,
-      travelVendorDetails
+      travelVendorDetails,
+      "Travels"
     );
     setDisableDeploy(false);
     if (!submitData) {

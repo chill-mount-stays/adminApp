@@ -1,3 +1,5 @@
+import { DocumentReference } from "firebase/firestore";
+
 export interface VendorDetails {
   vendorId: string;
   ownerName: string;
@@ -14,6 +16,7 @@ export interface StayVendor {
   imgUrls: DBImageFile[];
   description?: string;
   rating?: number;
+  vendorsRefId?: string;
 }
 
 export interface StayVendorDetails extends VendorDetails {
@@ -30,6 +33,7 @@ export interface TravelVendor {
   imgUrls: { imageId: string; firebaseUrl: string }[];
   description?: string;
   rating?: number;
+  vendorsRefId?: string;
 }
 
 export interface TravelVendorDetails extends VendorDetails {

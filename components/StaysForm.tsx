@@ -19,7 +19,7 @@ import { DocumentReference } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
-const StaysForm = ({ formData }: any) => {
+const StaysForm = ({ formData, vendorDetailsData }: any) => {
   const router = useRouter();
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Stays")
@@ -47,8 +47,9 @@ const StaysForm = ({ formData }: any) => {
     receptionContact: "",
   };
   // console.log(stayForm);
-  const [stayVendorDetails, setStayVendorDetails] =
-    useState<StayVendorDetails>(InitialStayDetails);
+  const [stayVendorDetails, setStayVendorDetails] = useState<StayVendorDetails>(
+    vendorDetailsData ?? InitialStayDetails
+  );
 
   const [images, setImages] = useState<DBImageFile[]>(formData?.imgUrls ?? []);
 
@@ -56,12 +57,10 @@ const StaysForm = ({ formData }: any) => {
   const [resetForm, setResetForm] = useState<number>(0);
 
   useEffect(() => {
-    if (images?.length > 0) {
-      setStayForm((prev) => ({
-        ...prev,
-        imgUrls: [...prev.imgUrls, ...images],
-      }));
-    }
+    setStayForm((prev) => ({
+      ...prev,
+      imgUrls: [...images],
+    }));
     console.log(images);
   }, [images]);
 
@@ -87,7 +86,12 @@ const StaysForm = ({ formData }: any) => {
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDisableDeploy(true);
-    const submitData = await addFormData(docRef, stayForm, stayVendorDetails);
+    const submitData = await addFormData(
+      docRef,
+      stayForm,
+      stayVendorDetails,
+      "Stays"
+    );
     setDisableDeploy(false);
     if (!submitData) {
       setResetForm(2);

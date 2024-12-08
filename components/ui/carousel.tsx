@@ -217,7 +217,8 @@ const CarouselPrevious = React.forwardRef<
           className
         )}
         disabled={!canScrollPrev}
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault();
           if (onImageChange) onImageChange();
           scrollPrev(); // Call internal scroll function
         }}
@@ -254,8 +255,10 @@ const CarouselNext = React.forwardRef<
           className
         )}
         disabled={!canScrollNext}
-        onClick={() => {
+        onClick={(e) => {
+          e.preventDefault();
           if (onImageChange) onImageChange();
+
           scrollNext(); // Call internal scroll function
         }}
         {...props}

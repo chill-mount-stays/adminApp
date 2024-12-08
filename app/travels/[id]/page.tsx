@@ -5,10 +5,16 @@ import React from "react";
 const page = async ({ params }: any) => {
   const { id } = await params;
 
-  const getVendorData = await getVendorDetails(id, "Travels");
+  const { vendorData, vendorDetailsData }: any = await getVendorDetails(
+    id,
+    "Travels"
+  );
   return (
     <div>
-      <TravelsForm />
+      <TravelsForm
+        formData={vendorData}
+        vendorDetailsData={vendorDetailsData}
+      />
     </div>
   );
 };

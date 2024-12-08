@@ -4,11 +4,14 @@ import React from "react";
 
 const page = async ({ params }: any) => {
   const { id } = await params;
-  const getVendorData = await getVendorDetails(id, "Stays");
+  const { vendorData, vendorDetailsData }: any = await getVendorDetails(
+    id,
+    "Stays"
+  );
   // console.log(getVendorData);
   return (
     <div>
-      <StaysForm formData={getVendorData} />
+      <StaysForm formData={vendorData} vendorDetailsData={vendorDetailsData} />
     </div>
   );
 };
