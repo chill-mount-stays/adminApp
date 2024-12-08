@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +17,7 @@ import { ImageUpload } from "./ImageUpload";
 import { addFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 
-const StaysForm = () => {
+const StaysForm = ({ formData }: any) => {
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Stays")
   );
@@ -33,7 +33,9 @@ const StaysForm = () => {
     description: "",
     rating: 0,
   };
-  const [stayForm, setStayForm] = useState<StayVendor>(InitialStayForm);
+  const [stayForm, setStayForm] = useState<StayVendor>(
+    formData ?? InitialStayForm
+  );
   const InitialStayDetails: StayVendorDetails = {
     vendorId: stayForm.vendorId,
     ownerName: "",
@@ -41,29 +43,39 @@ const StaysForm = () => {
     address: "",
     receptionContact: "",
   };
-
+  // console.log(stayForm);
   const [stayVendorDetails, setStayVendorDetails] =
     useState<StayVendorDetails>(InitialStayDetails);
 
   const [images, setImages] = useState<
     { imageId: string; firebaseUrl: string }[]
-  >([]);
+  >(stayForm.imgUrls ?? []);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
   const [resetForm, setResetForm] = useState(false);
 
   useEffect(() => {
-    setStayForm((prev) => ({ ...prev, imgUrls: [...prev.imgUrls, ...images] }));
+    if (images?.length > 0) {
+      setStayForm((prev) => ({
+        ...prev,
+        imgUrls: [...prev.imgUrls, ...images],
+      }));
+    }
+    console.log(images);
   }, [images]);
 
-  const handleChange = (e: any) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setStayForm((prevForm) => ({
       ...prevForm,
       [name]: value,
     }));
   };
-  const handleChnageVendorDetails = (e: any) => {
+  const handleChnageVendorDetails = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setStayVendorDetails((prev) => ({
       ...prev,
@@ -71,14 +83,14 @@ const StaysForm = () => {
     }));
   };
 
-  const handleFormSubmit = (e: any) => {
-    e.preventDefault;
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     addFormData(docRef, stayForm, stayVendorDetails);
     console.log(stayForm);
     console.log(stayVendorDetails);
   };
 
-  const handleFormReset = () => {
+  const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     setResetForm(true);
     setDocRef(generateDocRef("Stays"));
     setStayForm({ ...InitialStayForm, vendorId: docRef.id });
@@ -95,7 +107,7 @@ const StaysForm = () => {
           <CardTitle>Add New Stay Vendor</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-8" action={(e) => handleFormSubmit(e)}>
+          <form className="space-y-8" onSubmit={(e) => handleFormSubmit(e)}>
             <div className="flex lg:flex-row gap-8 items-start">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">

@@ -48,7 +48,7 @@ export default function ImagePreview({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious onImageChange={() => setImgIndex(imgIdx + 1)} />
+      <CarouselPrevious onImageChange={() => setImgIndex(imgIdx - 1)} />
       <CarouselNext onImageChange={() => setImgIndex(imgIdx + 1)} />
       <p className="text-muted-foreground text-sm text-center mt-4">
         {imgIdx} of {images.length}

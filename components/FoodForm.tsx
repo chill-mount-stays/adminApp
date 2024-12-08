@@ -1,13 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -17,13 +11,19 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Food, TravelVendor, TravelVendorDetails } from "@/type";
+import { Food } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
+import { addFoodFormData, generateDocRef } from "@/app/action";
+import { DocumentReference } from "firebase/firestore";
+import { ImageUpload } from "./ImageUpload";
 
 const FoodForm = () => {
+  const [docRef, setDocRef] = useState<DocumentReference>(
+    generateDocRef("Foods")
+  );
   const InitialFoodForm: Food = {
-    foodId: "",
+    foodId: docRef.id,
     name: "",
     description: "",
     price: 0,
@@ -37,7 +37,23 @@ const FoodForm = () => {
 
   const [foodForm, setFoodForm] = useState<Food>(InitialFoodForm);
 
-  const handleChange = (e: any) => {
+  const [images, setImages] = useState<
+    { imageId: string; firebaseUrl: string }[]
+  >([]);
+
+  const [disableDeploy, setDisableDeploy] = useState(false);
+  const [resetForm, setResetForm] = useState(false);
+
+  useEffect(() => {
+    setFoodForm((prev) => ({
+      ...prev,
+      imgUrls: [...prev.imgUrls, ...images],
+    }));
+  }, [images]);
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFoodForm((prevForm) => ({
       ...prevForm,
@@ -46,6 +62,18 @@ const FoodForm = () => {
     console.log(foodForm);
   };
 
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    addFoodFormData(docRef, foodForm);
+    console.log(foodForm);
+  };
+
+  function handleFormReset(e: React.MouseEvent<HTMLButtonElement>): void {
+    setResetForm(true);
+    setDocRef(generateDocRef("Foods"));
+    setFoodForm({ ...InitialFoodForm, foodId: docRef.id });
+  }
+
   return (
     <div>
       <Card className="w-full">
@@ -53,11 +81,11 @@ const FoodForm = () => {
           <CardTitle>Add New Food</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-8">
-            <div className="flex lg:flex-row gap-8">
+          <form className="space-y-8" onSubmit={(e) => handleFormSubmit(e)}>
+            <div className="flex lg:flex-row gap-8 items-start">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Food Name *</Label>
+                  <Label htmlFor="name">Recipe Name *</Label>
                   <Input
                     id="name"
                     type="text"
@@ -121,8 +149,8 @@ const FoodForm = () => {
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                       <SelectContent position="popper">
-                        <SelectItem value="Veg">AC</SelectItem>
-                        <SelectItem value="Non-Veg">Non-AC</SelectItem>
+                        <SelectItem value="Veg">Veg</SelectItem>
+                        <SelectItem value="Non-Veg">Non-Veg</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -141,7 +169,7 @@ const FoodForm = () => {
                   </div>
                 </div>
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">Description*</Label>
                   <Textarea
                     id="description"
                     name="description"
@@ -164,13 +192,23 @@ const FoodForm = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center w-full border rounded-md">
-                Image Upload Area
+              <div className="w-full">
+                <ImageUpload
+                  setDisableDeploy={setDisableDeploy}
+                  setFormImages={setImages}
+                  resetForm={resetForm}
+                  setResetForm={setResetForm}
+                  parentCalledFrom="foods"
+                />
               </div>
             </div>
             <div className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button type="submit">Deploy</Button>
+              <Button variant="outline" onClick={handleFormReset}>
+                Cancel
+              </Button>
+              <Button disabled={disableDeploy} type="submit">
+                Submit
+              </Button>
             </div>
           </form>
         </CardContent>

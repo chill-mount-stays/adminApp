@@ -17,8 +17,8 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
   return (
     <Carousel className="w-full max-w-xl mx-auto">
       <CarouselContent>
-        {images.map((image) => (
-          <CarouselItem key={image.imageId}>
+        {images.map((image, index) => (
+          <CarouselItem key={"image__" + index}>
             <div className="relative aspect-video">
               <Image
                 src={image.firebaseUrl}

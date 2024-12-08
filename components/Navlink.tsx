@@ -15,7 +15,7 @@ export const Navlinks = () => {
   const navLinks = [
     { text: "Dashboard", url: "/", icon: faTable },
     { text: "Stays", url: "/stays", icon: faHotel },
-    { text: "Travels", url: "/travel", icon: faCar },
+    { text: "Travels", url: "/travels", icon: faCar },
     { text: "Foods", url: "/foods", icon: faUtensils },
     { text: "Contact Us", url: "/contact-us", icon: faEnvelope },
   ];

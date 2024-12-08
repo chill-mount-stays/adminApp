@@ -6,11 +6,23 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StarIcon } from "lucide-react";
 import { StayVendorModal } from "./StayVendorModal";
-import { StayVendor } from "@/type";
+import { Food, StayVendor, TravelVendor } from "@/type";
+import StaysForm from "./StaysForm";
 
-export function StayVendorCard({ vendor }: { vendor: StayVendor }) {
+export function StayVendorCard({
+  vendor,
+}: {
+  vendor: StayVendor | TravelVendor | Food;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   console.log(vendor);
+
+  const isStayVendor = (vendor: any): vendor is StayVendor =>
+    vendor.type === "stay";
+  const isTravelVendor = (vendor: any): vendor is TravelVendor =>
+    vendor.type === "travel";
+  const isFood = (vendor: any): vendor is Food => vendor.type === "food";
+
   return (
     <>
       <Card
@@ -42,14 +54,16 @@ export function StayVendorCard({ vendor }: { vendor: StayVendor }) {
                 )}
               </div>
               <div className="flex justify-between items-center mt-4">
-                <div>
-                  <p className="text-lg font-bold">₹{vendor.price}</p>
-                  <p className="text-sm text-gray-600">
-                    {vendor.availability
-                      ? `${vendor.roomsAvailable} rooms left`
-                      : `Next available: ${vendor.nextAvailability}`}
-                  </p>
-                </div>
+                {isStayVendor(vendor) && (
+                  <div>
+                    <p className="text-lg font-bold">₹{vendor.price}</p>
+                    <p className="text-sm text-gray-600">
+                      {vendor.availability
+                        ? `${vendor.roomsAvailable} rooms left`
+                        : `Next available: ${vendor.nextAvailability}`}
+                    </p>
+                  </div>
+                )}
                 <Button variant="outline">View Details</Button>
               </div>
             </div>

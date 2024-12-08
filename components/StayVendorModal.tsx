@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { StarIcon } from "lucide-react";
-import { StayVendor } from "@/type";
+import { Food, StayVendor, TravelVendor } from "@/type";
 import { ImageCarousel } from "./ImageCarousel";
+import { useRouter } from "next/navigation";
 
 interface StayVendorModalProps {
-  vendor: StayVendor;
+  vendor: StayVendor | TravelVendor | Food;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -22,6 +23,14 @@ export function StayVendorModal({
   isOpen,
   onClose,
 }: StayVendorModalProps) {
+  const router = useRouter();
+
+  const isStayVendor = (vendor: any): vendor is StayVendor =>
+    vendor.type === "stay";
+  const isTravelVendor = (vendor: any): vendor is TravelVendor =>
+    vendor.type === "travel";
+  const isFood = (vendor: any): vendor is Food => vendor.type === "food";
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
@@ -31,7 +40,19 @@ export function StayVendorModal({
         <div className="grid gap-4">
           <ImageCarousel images={vendor.imgUrls} />
           <div className="grid gap-2">
-            <p className="text-lg font-semibold">${vendor.price} per night</p>
+            {isStayVendor(vendor) && (
+              <p className="text-lg font-semibold">${vendor.price} per night</p>
+            )}
+            {isTravelVendor(vendor) && (
+              <p className="text-lg font-semibold">
+                ${vendor.costPerDay} per day
+              </p>
+            )}
+            {isFood(vendor) && (
+              <p className="text-lg font-semibold">
+                ${vendor.price} per quantity
+              </p>
+            )}
             {vendor.rating && (
               <div className="flex items-center">
                 <StarIcon className="w-4 h-4 text-yellow-400 mr-1" />
@@ -39,13 +60,38 @@ export function StayVendorModal({
               </div>
             )}
             <p className="text-gray-600">{vendor.description}</p>
-            <p className="text-sm text-gray-600">
-              {vendor.availability
-                ? `${vendor.roomsAvailable} rooms available`
-                : `Next available: ${vendor.nextAvailability}`}
-            </p>
+            {isStayVendor(vendor) && (
+              <p className="text-sm text-gray-600">
+                {vendor.availability
+                  ? `${vendor.roomsAvailable} rooms available`
+                  : `Next available: ${vendor.nextAvailability}`}
+              </p>
+            )}
           </div>
-          <Button className="w-full">Book Now</Button>
+          {isStayVendor(vendor) && (
+            <Button
+              className="w-full"
+              onClick={() => router.push(`/stays/${vendor.vendorId}`)}
+            >
+              Edit
+            </Button>
+          )}
+          {isTravelVendor(vendor) && (
+            <Button
+              className="w-full"
+              onClick={() => router.push(`/travels/${vendor.vendorId}`)}
+            >
+              Edit
+            </Button>
+          )}
+          {isFood(vendor) && (
+            <Button
+              className="w-full"
+              onClick={() => router.push(`/foods/${vendor.foodId}`)}
+            >
+              Edit
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

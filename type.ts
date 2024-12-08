@@ -27,7 +27,7 @@ export interface TravelVendor {
   costPerDay: number;
   availability: boolean;
   nextAvailability?: string;
-  imgUrls: string[];
+  imgUrls: { imageId: string; firebaseUrl: string }[];
   description?: string;
   rating?: number;
 }
@@ -43,7 +43,7 @@ export interface Food {
   name: string;
   description: string;
   price: number;
-  imgUrls: string[];
+  imgUrls: { imageId: string; firebaseUrl: string }[];
   category: "Veg" | "Non-Veg";
   availability: boolean;
   nextAvailability?: string;

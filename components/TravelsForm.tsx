@@ -1,13 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -20,11 +14,16 @@ import { Label } from "@/components/ui/label";
 import { TravelVendor, TravelVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
-import { generateDocRef } from "@/app/action";
+import { addFormData, generateDocRef } from "@/app/action";
+import { DocumentReference } from "firebase/firestore";
+import { ImageUpload } from "./ImageUpload";
 
 const TravelsForm = () => {
+  const [docRef, setDocRef] = useState<DocumentReference>(
+    generateDocRef("Travels")
+  );
   const InitialTravelForm: TravelVendor = {
-    vendorId: generateDocRef("Travels").id,
+    vendorId: docRef.id,
     name: "",
     travelOption: "Non-AC",
     costPerDay: 0,
@@ -46,18 +45,57 @@ const TravelsForm = () => {
   const [travelVendorDetails, setTravelVendorDetails] =
     useState<TravelVendorDetails>(InitialTravelDetails);
 
-  const handleChange = (e: any) => {
+  const [images, setImages] = useState<
+    { imageId: string; firebaseUrl: string }[]
+  >([]);
+
+  const [disableDeploy, setDisableDeploy] = useState(false);
+  const [resetForm, setResetForm] = useState(false);
+
+  useEffect(() => {
+    setTravelForm((prev) => ({
+      ...prev,
+      imgUrls: [...prev.imgUrls, ...images],
+    }));
+  }, [images]);
+
+  const handleChnageVendorDetails = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setTravelVendorDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setTravelForm((prevForm) => ({
       ...prevForm,
       [name]: value,
     }));
-    setTravelVendorDetails((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
     console.log(travelForm);
     console.log(travelVendorDetails);
+  };
+
+  const handleFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault;
+    addFormData(docRef, travelForm, travelVendorDetails);
+    console.log(travelForm);
+    console.log(travelVendorDetails);
+  };
+
+  const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setResetForm(true);
+    setDocRef(generateDocRef("Travels"));
+    setTravelForm({ ...InitialTravelForm, vendorId: docRef.id });
+    setTravelVendorDetails({
+      ...InitialTravelDetails,
+      vendorId: travelForm.vendorId,
+    });
   };
 
   return (
@@ -67,24 +105,24 @@ const TravelsForm = () => {
           <CardTitle>Add New Travel Vendor</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-8">
-            <div className="flex lg:flex-row gap-8">
+          <form className="space-y-8" onSubmit={(e) => handleFormSubmit(e)}>
+            <div className="flex lg:flex-row gap-8 items-start">
               <div className="grid items-center gap-4 lg:w-[640px]">
                 <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="name">Name *</Label>
+                  <Label htmlFor="name">Vehicle Name *</Label>
                   <Input
                     id="name"
                     type="text"
                     name="name"
                     value={travelForm.name}
                     onChange={handleChange}
-                    placeholder="Name of your vendor stay"
+                    placeholder="Name of your vehicle"
                     required
                   />
                 </div>
                 <div className="flex items-top justify-between space-x-4">
                   <div className="flex flex-col space-y-1.5 w-full">
-                    <Label htmlFor="costPerDay">Price Per Day *</Label>
+                    <Label htmlFor="costPerDay">Cost Per Day *</Label>
                     <Input
                       id="costPerDay"
                       type="number"
@@ -163,7 +201,7 @@ const TravelsForm = () => {
                     name="description"
                     value={travelForm.description}
                     onChange={handleChange}
-                    placeholder="Mention AC/Non-AC, No of rooms, bed count, bathroom availability."
+                    placeholder="Mention vehicle special features."
                     required
                   />
                 </div>
@@ -175,7 +213,7 @@ const TravelsForm = () => {
                       type="text"
                       name="ownerName"
                       value={travelVendorDetails.ownerName}
-                      onChange={handleChange}
+                      onChange={handleChnageVendorDetails}
                       placeholder="Enter the owner name"
                       required
                     />
@@ -187,7 +225,7 @@ const TravelsForm = () => {
                       type="text"
                       name="ownerContact"
                       value={travelVendorDetails.ownerContact}
-                      onChange={handleChange}
+                      onChange={handleChnageVendorDetails}
                       placeholder="Owner contact"
                       required
                     />
@@ -199,19 +237,29 @@ const TravelsForm = () => {
                     id="address"
                     name="address"
                     value={travelVendorDetails.address}
-                    onChange={handleChange}
+                    onChange={handleChnageVendorDetails}
                     placeholder="Enter the address"
                     required
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-center w-full border rounded-md">
-                Image Upload Area
+              <div className="w-full">
+                <ImageUpload
+                  setDisableDeploy={setDisableDeploy}
+                  setFormImages={setImages}
+                  resetForm={resetForm}
+                  setResetForm={setResetForm}
+                  parentCalledFrom="travels"
+                />
               </div>
             </div>
             <div className="flex justify-between">
-              <Button variant="outline">Cancel</Button>
-              <Button>Deploy</Button>
+              <Button variant="outline" onClick={handleFormReset}>
+                Cancel
+              </Button>
+              <Button disabled={disableDeploy} type="submit">
+                Submit
+              </Button>
             </div>
           </form>
         </CardContent>

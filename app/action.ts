@@ -1,10 +1,18 @@
 import { db, storage } from "@/lib/firebase";
-import { ImageFile, StayVendor, StayVendorDetails } from "@/type";
+import {
+  Food,
+  ImageFile,
+  StayVendor,
+  StayVendorDetails,
+  TravelVendor,
+  TravelVendorDetails,
+} from "@/type";
 import {
   addDoc,
   collection,
   doc,
   DocumentReference,
+  getDoc,
   getDocs,
   setDoc,
 } from "firebase/firestore";
@@ -25,13 +33,24 @@ export const generateDocRef = (colletionName: string): DocumentReference => {
 
 export const addFormData = async (
   docRef: DocumentReference,
-  clientData: StayVendor,
-  adminData: StayVendorDetails
+  clientData: StayVendor | TravelVendor,
+  adminData: StayVendorDetails | TravelVendorDetails
 ) => {
   try {
     await setDoc(docRef, clientData);
     const newDocRef = await addDoc(collection(db, "Vendors"), adminData);
     console.log(newDocRef.id);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+export const addFoodFormData = async (
+  docRef: DocumentReference,
+  clientData: Food
+) => {
+  try {
+    await setDoc(docRef, clientData);
   } catch (e) {
     console.error(e);
   }
@@ -63,11 +82,23 @@ export const getData = async (collectionName: string) => {
   const querySnapshot = await getDocs(collection(db, collectionName));
   const data: any = [];
   querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
     data.push(doc.data());
     console.log(doc.id, " => ", doc.data());
   });
   return data;
+};
+
+export const getVendorDetails = async (id: string, collectionName: string) => {
+  const docRef = doc(db, collectionName, id);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    console.log("Document data:", docSnap.data());
+    return docSnap.data();
+  } else {
+    // docSnap.data() will be undefined in this case
+    console.log("No such document!");
+  }
 };
 
 //Delete Functions
