@@ -17,8 +17,10 @@ import { ImageUpload } from "./ImageUpload";
 import { addFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const StaysForm = ({ formData }: any) => {
+  const router = useRouter();
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Stays")
   );
@@ -89,6 +91,12 @@ const StaysForm = ({ formData }: any) => {
     setDisableDeploy(false);
     if (!submitData) {
       setResetForm(2);
+      setDocRef(generateDocRef("Stays"));
+      setStayForm({ ...InitialStayForm, vendorId: docRef.id });
+      setStayVendorDetails({
+        ...InitialStayDetails,
+        vendorId: stayForm.vendorId,
+      });
       toast({
         title: "Successfully done",
       });
@@ -276,9 +284,21 @@ const StaysForm = ({ formData }: any) => {
               </div>
             </div>
             <div className="flex justify-between">
-              <Button variant="outline" onClick={handleFormReset}>
-                Cancel
-              </Button>
+              {formData ? (
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.back();
+                  }}
+                >
+                  back
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={handleFormReset}>
+                  Cancel
+                </Button>
+              )}
               <Button disabled={disableDeploy} type="submit">
                 Submit
               </Button>

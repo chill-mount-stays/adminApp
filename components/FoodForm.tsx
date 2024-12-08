@@ -17,11 +17,13 @@ import { Textarea } from "./ui/textarea";
 import { addFoodFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
+import { useToast } from "@/hooks/use-toast";
 
 const FoodForm = () => {
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Foods")
   );
+  const { toast } = useToast();
   const InitialFoodForm: Food = {
     foodId: docRef.id,
     name: "",
@@ -42,7 +44,7 @@ const FoodForm = () => {
   >([]);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
-  const [resetForm, setResetForm] = useState(false);
+  const [resetForm, setResetForm] = useState(0);
 
   useEffect(() => {
     setFoodForm((prev) => ({
@@ -62,14 +64,29 @@ const FoodForm = () => {
     console.log(foodForm);
   };
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addFoodFormData(docRef, foodForm);
+    setDisableDeploy(true);
+    const submitData = await addFoodFormData(docRef, foodForm);
+    setDisableDeploy(false);
+    if (!submitData) {
+      setResetForm(2);
+      setDocRef(generateDocRef("Foods"));
+      setFoodForm({ ...InitialFoodForm, foodId: docRef.id });
+      toast({
+        title: "Successfully done",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Some error occured, please retry",
+      });
+    }
     console.log(foodForm);
   };
 
   function handleFormReset(e: React.MouseEvent<HTMLButtonElement>): void {
-    setResetForm(true);
+    setResetForm(1);
     setDocRef(generateDocRef("Foods"));
     setFoodForm({ ...InitialFoodForm, foodId: docRef.id });
   }

@@ -17,8 +17,10 @@ import { Textarea } from "./ui/textarea";
 import { addFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
+import { useToast } from "@/hooks/use-toast";
 
 const TravelsForm = () => {
+  const { toast } = useToast();
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Travels")
   );
@@ -50,7 +52,7 @@ const TravelsForm = () => {
   >([]);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
-  const [resetForm, setResetForm] = useState(false);
+  const [resetForm, setResetForm] = useState<number>(0);
 
   useEffect(() => {
     setTravelForm((prev) => ({
@@ -81,15 +83,39 @@ const TravelsForm = () => {
     console.log(travelVendorDetails);
   };
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault;
-    addFormData(docRef, travelForm, travelVendorDetails);
+    setDisableDeploy(true);
+    const submitData = await addFormData(
+      docRef,
+      travelForm,
+      travelVendorDetails
+    );
+    setDisableDeploy(false);
+    if (!submitData) {
+      setResetForm(2);
+      setDocRef(generateDocRef("Travels"));
+      setTravelForm({ ...InitialTravelForm, vendorId: docRef.id });
+      setTravelVendorDetails({
+        ...InitialTravelDetails,
+        vendorId: travelForm.vendorId,
+      });
+      toast({
+        title: "Successfully done",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Some error occured, please retry",
+      });
+    }
+
     console.log(travelForm);
     console.log(travelVendorDetails);
   };
 
   const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setResetForm(true);
+    setResetForm(1);
     setDocRef(generateDocRef("Travels"));
     setTravelForm({ ...InitialTravelForm, vendorId: docRef.id });
     setTravelVendorDetails({

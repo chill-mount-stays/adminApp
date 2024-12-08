@@ -41,7 +41,6 @@ export const addFormData = async (
   try {
     const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
     await setDoc(docRef, { ...clientData, vendorsRefId: newVendorsRef.id });
-    console.log(newVendorsRef.id);
     return 0;
   } catch (e) {
     console.error(e);
@@ -55,8 +54,10 @@ export const addFoodFormData = async (
 ) => {
   try {
     await setDoc(docRef, clientData);
+    return 0;
   } catch (e) {
     console.error(e);
+    return 1;
   }
 };
 
