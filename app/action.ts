@@ -54,10 +54,8 @@ export const addFormData = async (
         collection(db, collectionName),
         clientData.vendorId
       );
-      const updatedAdminData = { ...adminData };
-      const updatedClientData = { ...clientData };
-      await setDoc(docVendorOwnerRef, adminData);
-      await setDoc(docVendorRef, clientData);
+      await updateDoc(docVendorOwnerRef, { ...adminData });
+      await updateDoc(docVendorRef, { ...clientData });
       console.log(docVendorRef, docRef);
     }
     return 0;
@@ -72,7 +70,13 @@ export const addFoodFormData = async (
   clientData: Food
 ) => {
   try {
-    await setDoc(docRef, clientData);
+    if (clientData.foodId === "") {
+      await setDoc(docRef, clientData);
+    } else {
+      const docFoodRefId = clientData.foodId;
+      const docFoodRef = doc(collection(db, "Foods"), docFoodRefId);
+      await updateDoc(docFoodRef, { ...clientData });
+    }
     return 0;
   } catch (e) {
     console.error(e);
@@ -129,6 +133,17 @@ export const getVendorDetails = async (id: string, collectionName: string) => {
   } else {
     // docSnap.data() will be undefined in this case
     console.log("No such document!");
+    return [];
+  }
+};
+
+export const getFood = async (foodId: string) => {
+  const docRef = doc(db, "Foods", foodId);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    return [];
   }
 };
 

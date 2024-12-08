@@ -44,6 +44,11 @@ export function StayVendorCard({
             <div className="flex flex-col justify-between p-4 md:w-3/5">
               <div>
                 <h3 className="text-lg font-semibold mb-2">{vendor.name}</h3>
+                {isTravelVendor(vendor) && (
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {vendor.travelOption}
+                  </p>
+                )}
                 <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                   {vendor.description}
                 </p>
@@ -63,6 +68,21 @@ export function StayVendorCard({
                         ? `${vendor.roomsAvailable} rooms left`
                         : `Next available: ${vendor.nextAvailability}`}
                     </p>
+                  </div>
+                )}
+                {isTravelVendor(vendor) && (
+                  <p className="text-lg font-bold">₹{vendor.costPerDay}</p>
+                )}
+                {isFood(vendor) && (
+                  <p className="text-lg font-bold">₹{vendor.price}</p>
+                )}
+                {(isTravelVendor(vendor) || isFood(vendor)) && (
+                  <div className="text-sm text-gray-600">
+                    {vendor.availability ? (
+                      <p className="text-green-600">Available</p>
+                    ) : (
+                      <p>Next available: {vendor.nextAvailability}</p>
+                    )}
                   </div>
                 )}
                 <Button variant="outline">View Details</Button>

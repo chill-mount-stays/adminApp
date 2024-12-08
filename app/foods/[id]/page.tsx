@@ -1,14 +1,14 @@
-import { getVendorDetails } from "@/app/action";
+import { getFood, getVendorDetails } from "@/app/action";
 import FoodForm from "@/components/FoodForm";
 import React from "react";
 
 const page = async ({ params }: any) => {
   const { id } = await params;
-  // const getVendorData = await getVendorDetails(id, "Foods");
+  const foodData = await getFood(id);
 
   return (
     <div>
-      <FoodForm />
+      <FoodForm foodData={foodData} />
     </div>
   );
 };

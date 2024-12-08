@@ -174,7 +174,6 @@ const TravelsForm = ({ formData, vendorDetailsData }: any) => {
                           return { ...prev, availability: bool };
                         });
                       }}
-                      required
                     />
                   </div>
                 </div>

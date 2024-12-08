@@ -19,7 +19,7 @@ import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 
-const FoodForm = () => {
+const FoodForm = ({ foodData }: any) => {
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Foods")
   );
@@ -37,11 +37,11 @@ const FoodForm = () => {
     tags: [],
   };
 
-  const [foodForm, setFoodForm] = useState<Food>(InitialFoodForm);
+  const [foodForm, setFoodForm] = useState<Food>(foodData ?? InitialFoodForm);
 
   const [images, setImages] = useState<
     { imageId: string; firebaseUrl: string }[]
-  >([]);
+  >(foodData?.imgUrls ?? []);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
   const [resetForm, setResetForm] = useState(0);
@@ -49,7 +49,7 @@ const FoodForm = () => {
   useEffect(() => {
     setFoodForm((prev) => ({
       ...prev,
-      imgUrls: [...prev.imgUrls, ...images],
+      imgUrls: [...images],
     }));
   }, [images]);
 
@@ -137,7 +137,6 @@ const FoodForm = () => {
                           return { ...prev, availability: bool };
                         });
                       }}
-                      required
                     />
                   </div>
                 </div>
@@ -203,7 +202,7 @@ const FoodForm = () => {
                     name="tags"
                     value={foodForm.tags}
                     onChange={handleChange}
-                    placeholder="Owner contact"
+                    placeholder="#tags"
                     required
                   />
                 </div>
