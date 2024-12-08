@@ -20,15 +20,15 @@ export const ImageUpload = ({
   initialImages,
   setFormImages,
   setDisableDeploy,
-  resetForm = false,
+  resetForm = 0,
   setResetForm,
   parentCalledFrom = "stays",
 }: {
   initialImages: DBImageFile[];
   setFormImages: React.Dispatch<React.SetStateAction<DBImageFile[]>>;
   setDisableDeploy: React.Dispatch<React.SetStateAction<boolean>>;
-  setResetForm: React.Dispatch<React.SetStateAction<boolean>>;
-  resetForm?: boolean;
+  setResetForm: React.Dispatch<React.SetStateAction<number>>;
+  resetForm?: number;
   parentCalledFrom?: string;
 }) => {
   const [images, setImages] = useState<ImageFile[] | DBImageFile[]>(
@@ -64,19 +64,24 @@ export const ImageUpload = ({
         setImageUrls([]);
         setImages([]);
         setDisableDeploy(false);
-        setResetForm(false);
+        setResetForm(0);
       })
       .catch((e) => {
         console.error("error in removing images", e);
-        setResetForm(false);
+        setResetForm(0);
         setDisableDeploy(false);
       });
   };
 
   useEffect(() => {
-    if (resetForm) {
+    if (resetForm === 1) {
       setDisableDeploy(true);
       resetImages();
+    } else if (resetForm === 2) {
+      setImageUrls([]);
+      setImages([]);
+      setDisableDeploy(false);
+      setResetForm(0);
     }
   }, [resetForm]);
 

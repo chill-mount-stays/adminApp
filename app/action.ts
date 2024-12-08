@@ -42,8 +42,10 @@ export const addFormData = async (
     const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
     await setDoc(docRef, { ...clientData, vendorsRefId: newVendorsRef.id });
     console.log(newVendorsRef.id);
+    return 0;
   } catch (e) {
     console.error(e);
+    return 1;
   }
 };
 
@@ -96,7 +98,7 @@ export const getVendorDetails = async (id: string, collectionName: string) => {
 
   if (docSnap.exists()) {
     console.log("Document data:", docSnap.data());
-    const docVendorRef = doc(db, collectionName, id);
+    const docVendorRef = doc(db, collectionName, docSnap.data().vendorId);
     const docVendorSnap = await getDoc(docVendorRef);
     const responseData = { ...docSnap.data(), ...docVendorSnap.data() }; //here i want to combine both vendorResource and VendorDetails
     return responseData;

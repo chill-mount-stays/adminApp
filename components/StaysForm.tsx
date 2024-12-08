@@ -16,12 +16,13 @@ import { Textarea } from "./ui/textarea";
 import { ImageUpload } from "./ImageUpload";
 import { addFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 const StaysForm = ({ formData }: any) => {
   const [docRef, setDocRef] = useState<DocumentReference>(
     generateDocRef("Stays")
   );
-
+  const { toast } = useToast();
   const InitialStayForm: StayVendor = {
     vendorId: docRef.id,
     name: "",
@@ -50,7 +51,7 @@ const StaysForm = ({ formData }: any) => {
   const [images, setImages] = useState<DBImageFile[]>(formData?.imgUrls ?? []);
 
   const [disableDeploy, setDisableDeploy] = useState(false);
-  const [resetForm, setResetForm] = useState(false);
+  const [resetForm, setResetForm] = useState<number>(0);
 
   useEffect(() => {
     if (images?.length > 0) {
@@ -81,15 +82,28 @@ const StaysForm = ({ formData }: any) => {
     }));
   };
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addFormData(docRef, stayForm, stayVendorDetails);
+    setDisableDeploy(true);
+    const submitData = await addFormData(docRef, stayForm, stayVendorDetails);
+    setDisableDeploy(false);
+    if (!submitData) {
+      setResetForm(2);
+      toast({
+        title: "Successfully done",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Some error occured, please retry",
+      });
+    }
     console.log(stayForm);
     console.log(stayVendorDetails);
   };
 
   const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setResetForm(true);
+    setResetForm(1);
     setDocRef(generateDocRef("Stays"));
     setStayForm({ ...InitialStayForm, vendorId: docRef.id });
     setStayVendorDetails({

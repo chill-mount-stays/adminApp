@@ -4,7 +4,7 @@ import React from "react";
 
 const page = async ({ params }: any) => {
   const { id } = await params;
-  const getVendorData = await getVendorDetails(id, "Foods");
+  // const getVendorData = await getVendorDetails(id, "Foods");
 
   return (
     <div>
