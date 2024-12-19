@@ -53,6 +53,7 @@ export interface Food {
   nextAvailability?: string;
   rating?: number;
   tags?: string[];
+  foodRefId?: string;
 }
 
 export interface ImageFile extends File {

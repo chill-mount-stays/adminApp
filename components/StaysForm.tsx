@@ -18,7 +18,6 @@ import { addFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-
 const StaysForm = ({ formData, vendorDetailsData }: any) => {
   const router = useRouter();
   const [docRef, setDocRef] = useState<DocumentReference>(
@@ -104,6 +103,7 @@ const StaysForm = ({ formData, vendorDetailsData }: any) => {
       toast({
         title: "Successfully done",
       });
+      router.push("/stays");
     } else {
       toast({
         variant: "destructive",

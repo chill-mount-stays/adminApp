@@ -70,12 +70,14 @@ export const addFoodFormData = async (
   clientData: Food
 ) => {
   try {
-    if (clientData.foodId === "") {
-      await setDoc(docRef, clientData);
+    if (!clientData.foodRefId) {
+      await setDoc(docRef, { ...clientData, foodRefId: docRef.id });
+      console.log("new food", docRef.id);
     } else {
       const docFoodRefId = clientData.foodId;
       const docFoodRef = doc(collection(db, "Foods"), docFoodRefId);
       await updateDoc(docFoodRef, { ...clientData });
+      console.log("old food", docRef.id);
     }
     return 0;
   } catch (e) {

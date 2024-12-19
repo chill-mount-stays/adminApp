@@ -18,6 +18,7 @@ import { addFoodFormData, generateDocRef } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const FoodForm = ({ foodData }: any) => {
   const [docRef, setDocRef] = useState<DocumentReference>(
@@ -36,7 +37,7 @@ const FoodForm = ({ foodData }: any) => {
     rating: 0,
     tags: [],
   };
-
+  const router = useRouter();
   const [foodForm, setFoodForm] = useState<Food>(foodData ?? InitialFoodForm);
 
   const [images, setImages] = useState<
@@ -76,6 +77,7 @@ const FoodForm = ({ foodData }: any) => {
       toast({
         title: "Successfully done",
       });
+      router.push("/foods");
     } else {
       toast({
         variant: "destructive",
@@ -122,7 +124,7 @@ const FoodForm = ({ foodData }: any) => {
                       name="price"
                       value={foodForm.price === 0 ? "" : foodForm.price}
                       onChange={handleChange}
-                      placeholder="Cost per day"
+                      placeholder="Price per quantity"
                       required
                     />
                   </div>
