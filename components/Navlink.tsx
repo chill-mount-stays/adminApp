@@ -17,7 +17,6 @@ export const Navlinks = () => {
     { text: "Stays", url: "/stays", icon: faHotel },
     { text: "Travels", url: "/travels", icon: faCar },
     { text: "Foods", url: "/foods", icon: faUtensils },
-    { text: "Contact Us", url: "/contact-us", icon: faEnvelope },
   ];
   return (
     <div className="flex gap-5 lg:gap-4 flex-col">
