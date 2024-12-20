@@ -32,11 +32,12 @@ export function StayVendorCard({
       >
         <CardContent className="p-0">
           <div className="flex flex-col md:flex-row h-full">
-            <div className="relative w-full md:w-2/5 h-48 md:h-auto">
+            <div className="relative w-full md:w-2/5 min-h-48 md:h-auto">
               <Image
                 src={vendor.imgUrls[0]?.firebaseUrl || "/placeholder.svg"}
                 alt={vendor.name}
                 layout="fill"
+                sizes="100%"
                 objectFit="cover"
                 priority
               />
