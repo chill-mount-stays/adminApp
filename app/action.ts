@@ -1,31 +1,7 @@
 import { db, storage } from "@/lib/firebase";
-import {
-  Food,
-  ImageFile,
-  StayVendor,
-  StayVendorDetails,
-  TravelVendor,
-  TravelVendorDetails,
-} from "@/type";
-import {
-  addDoc,
-  collection,
-  doc,
-  DocumentReference,
-  getDoc,
-  getDocs,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { Food, ImageFile, StayVendor, StayVendorDetails, TravelVendor, TravelVendorDetails } from "@/type";
+import { addDoc, collection, doc, DocumentReference, getDoc, getDocs, query, setDoc, updateDoc, where, orderBy, QueryOrderByConstraint, Timestamp, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 export const generateDocRef = (colletionName: string): DocumentReference => {
   const newDocRef = doc(collection(db, colletionName));
@@ -34,12 +10,7 @@ export const generateDocRef = (colletionName: string): DocumentReference => {
 
 //Post Functions
 
-export const addFormData = async (
-  docRef: DocumentReference,
-  clientData: StayVendor | TravelVendor,
-  adminData: StayVendorDetails | TravelVendorDetails,
-  collectionName: string
-) => {
+export const addFormData = async (docRef: DocumentReference, clientData: StayVendor | TravelVendor, adminData: StayVendorDetails | TravelVendorDetails, collectionName: string) => {
   try {
     if (!clientData.vendorsRefId) {
       const newVendorsRef = await addDoc(collection(db, "Vendors"), adminData);
@@ -50,10 +21,7 @@ export const addFormData = async (
     } else {
       const docVendorRefId = clientData.vendorsRefId;
       const docVendorOwnerRef = doc(collection(db, "Vendors"), docVendorRefId);
-      const docVendorRef = doc(
-        collection(db, collectionName),
-        clientData.vendorId
-      );
+      const docVendorRef = doc(collection(db, collectionName), clientData.vendorId);
       await updateDoc(docVendorOwnerRef, { ...adminData });
       await updateDoc(docVendorRef, { ...clientData });
       console.log(docVendorRef, docRef);
@@ -65,10 +33,7 @@ export const addFormData = async (
   }
 };
 
-export const addFoodFormData = async (
-  docRef: DocumentReference,
-  clientData: Food
-) => {
+export const addFoodFormData = async (docRef: DocumentReference, clientData: Food) => {
   try {
     if (!clientData.foodRefId) {
       await setDoc(docRef, { ...clientData, foodRefId: docRef.id });
@@ -86,10 +51,7 @@ export const addFoodFormData = async (
   }
 };
 
-export const uploadImageToFirebase = (
-  image: File,
-  parentCalledFrom: string
-) => {
+export const uploadImageToFirebase = (image: File, parentCalledFrom: string) => {
   const storagePath = `images/${parentCalledFrom}/${image.name}-${Date.now()}`;
   const storageRef = ref(storage, storagePath);
 
@@ -108,8 +70,25 @@ export const uploadImageToFirebase = (
 
 //Get Functions
 
+export const getOrderDetails = async () => {
+  const dataRef = collection(db, "Orders");
+  // const data = db
+  const queryCondition = query(dataRef, orderBy("bookingDate", "desc"));
+  const querySnapshot = await getDocs(queryCondition);
+  const data: any = [];
+  querySnapshot.forEach((doc) => {
+    const BKdata = doc.data();
+    const bookingDate = BKdata.bookingDate;
+    new Date();
+    BKdata.bookingDate = bookingDate.toDate().toUTCString();
+    data.push(BKdata);
+  });
+  return data;
+};
+
 export const getData = async (collectionName: string) => {
-  const querySnapshot = await getDocs(collection(db, collectionName));
+  const dataRef = collection(db, collectionName);
+  const querySnapshot = await getDocs(dataRef);
   const data: any = [];
   querySnapshot.forEach((doc) => {
     data.push(doc.data());

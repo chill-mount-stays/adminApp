@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTable, faHotel, faCar, faUtensils, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faTable, faHotel, faCar, faUtensils, faEnvelope, faUser } from "@fortawesome/free-solid-svg-icons";
 export const Navlinks = () => {
   const pathname = usePathname();
   // TODO: Move navLinks to DB
@@ -11,7 +11,7 @@ export const Navlinks = () => {
     { text: "Stays", url: "/stays", icon: faHotel },
     { text: "Travels", url: "/travels", icon: faCar },
     { text: "Foods", url: "/foods", icon: faUtensils },
-    { text: "Orders", url: "/orders", icon: faUtensils },
+    { text: "Orders", url: "/orders", icon: faUser },
   ];
   return (
     <div className="flex gap-5 lg:gap-4 flex-col">

@@ -27,7 +27,9 @@ export const OrdersTableWithPopup: React.FC<OrdersTableWithPopupProps> = ({ orde
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>S No.:</TableHead>
             <TableHead>Customer Phone</TableHead>
+            <TableHead>Time & date</TableHead>
             <TableHead>Stay</TableHead>
             <TableHead>Travel</TableHead>
             <TableHead>Food</TableHead>
@@ -37,9 +39,11 @@ export const OrdersTableWithPopup: React.FC<OrdersTableWithPopupProps> = ({ orde
         <TableBody>
           {orders.map((order, idx) => (
             <TableRow key={idx}>
+              <TableCell>{idx + 1}</TableCell>
               <TableCell>{order.customerInfo.phone}</TableCell>
-              <TableCell>{order.stayItem ? <Check className="text-green-500" aria-label="Stay included" /> : <Minus className="text-gray-300" aria-label="Stay not included" />}</TableCell>
-              <TableCell>{order.travelItem ? <Check className="text-green-500" aria-label="Travel included" /> : <Minus className="text-gray-300" aria-label="Travel not included" />}</TableCell>
+              <TableCell>{order.bookingDate}</TableCell>
+              <TableCell>{order.stayItem && order.stayItem.length ? <Check className="text-green-500" aria-label="Stay included" /> : <Minus className="text-gray-300" aria-label="Stay not included" />}</TableCell>
+              <TableCell>{order.travelItem && order.travelItem.length ? <Check className="text-green-500" aria-label="Travel included" /> : <Minus className="text-gray-300" aria-label="Travel not included" />}</TableCell>
               <TableCell>{order.foodItems && order.foodItems.length > 0 ? <Check className="text-green-500" aria-label="Food included" /> : <Minus className="text-gray-300" aria-label="Food not included" />}</TableCell>
               <TableCell>
                 <Dialog>

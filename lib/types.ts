@@ -29,4 +29,5 @@ export type OrderData = {
   stayItem: CartItem[];
   travelItem: CartItem[];
   foodItems: CartItem[];
+  bookingDate: string;
 };

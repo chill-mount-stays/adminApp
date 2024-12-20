@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { OrderData } from "../lib/types";
 
 const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
-  if (!order) {
+  if (!order || (order.foodItems.length === 0 && order.travelItem.length === 0 && order.stayItem.length === 0)) {
     return (
       <Card className="w-full max-w-3xl mx-auto">
         <CardHeader>
@@ -27,75 +27,84 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
         <p className="text-sm text-muted-foreground">Phone: {customerInfo.phone}</p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <section aria-labelledby="stay-info">
-          <h2 id="stay-info" className="text-xl font-semibold mb-2">
-            Stay Information
-          </h2>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <p className="text-sm font-medium">Check-in</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.checkIn}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Check-out</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.checkOut}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Guests</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.guests}</p>
-            </div>
-          </div>
-          <div className="mt-2">
-            <Badge variant="secondary">{stayItem.at(0)?.name}</Badge>
-            <span className="ml-2 text-sm font-medium">${stayItem.at(0)?.price}</span>
-          </div>
-        </section>
-
-        <Separator />
-
-        <section aria-labelledby="travel-info">
-          <h2 id="travel-info" className="text-xl font-semibold mb-2">
-            Travel Information
-          </h2>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <p className="text-sm font-medium">Destination</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.destination}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Pick-up</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.pickUp}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium">Drop-off</p>
-              <p className="text-sm text-muted-foreground">{customerInfo.dropDown}</p>
-            </div>
-          </div>
-          <div className="mt-2">
-            <Badge variant="secondary">{travelItem.at(0)?.name}</Badge>
-            <span className="ml-2 text-sm font-medium">${travelItem.at(0)?.price}</span>
-          </div>
-        </section>
-
-        <Separator />
-
-        <section aria-labelledby="food-info">
-          <h2 id="food-info" className="text-xl font-semibold mb-2">
-            Food Information
-          </h2>
-          <p className="text-sm font-medium mb-2">Food Date: {customerInfo.foodDate}</p>
-          <ul className="space-y-2">
-            {foodItems.map((item) => (
-              <li key={item.id} className="flex justify-between items-center">
+        {stayItem.length > 0 && (
+          <div className="space-y-6">
+            <section aria-labelledby="stay-info">
+              <h2 id="stay-info" className="text-xl font-semibold mb-2">
+                Stay Information
+              </h2>
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Badge variant="secondary">{item.name}</Badge>
-                  {item.category === "food" && <span className="ml-2 text-sm text-muted-foreground">x{item.itemCount}</span>}
+                  <p className="text-sm font-medium">Check-in</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.checkIn.split(",").at(0)}</p>
                 </div>
-                <span className="text-sm font-medium">${item.price}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
+                <div>
+                  <p className="text-sm font-medium">Check-out</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.checkOut.split(",").at(0)}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Guests</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.guests}</p>
+                </div>
+              </div>
+              <div className="mt-2">
+                <Badge variant="secondary">{stayItem.at(0)?.name}</Badge>
+                <span className="ml-2 text-sm font-medium">${stayItem.at(0)?.price}</span>
+              </div>
+            </section>
+          </div>
+        )}
+        {travelItem.length > 0 && (
+          <div className="space-y-6">
+            <Separator />
+            <section aria-labelledby="travel-info">
+              <h2 id="travel-info" className="text-xl font-semibold mb-2">
+                Travel Information
+              </h2>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <p className="text-sm font-medium">Destination</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.destination}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Pick-up</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.pickUp.split(",").at(0)}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Drop-off</p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.dropDown.split(",").at(0)}</p>
+                </div>
+              </div>
+              <div className="mt-2">
+                <Badge variant="secondary">{travelItem.at(0)?.name}</Badge>
+                <span className="ml-2 text-sm font-medium">${travelItem.at(0)?.price}</span>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {foodItems.length > 0 && (
+          <div className="space-y-6">
+            <Separator />
+            <section aria-labelledby="food-info">
+              <h2 id="food-info" className="text-xl font-semibold mb-2">
+                Food Information
+              </h2>
+              <p className="text-sm font-medium mb-2">Food Date: {customerInfo.foodDate.split(",").at(0)}</p>
+              <ul className="space-y-2">
+                {foodItems.map((item) => (
+                  <li key={item.id} className="flex justify-between items-center">
+                    <div>
+                      <Badge variant="secondary">{item.name}</Badge>
+                      {item.category === "food" && <span className="ml-2 text-sm text-muted-foreground">x{item.itemCount}</span>}
+                    </div>
+                    <span className="text-sm font-medium">${item.price}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
