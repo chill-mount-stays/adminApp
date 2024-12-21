@@ -7,18 +7,13 @@ import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { updateOrderRead } from "@/app/action";
 
-const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
-  const [isRead, setIsRead] = useState<boolean | undefined>(order?.isNew);
+const CustomerOrderDisplay: React.FC<{ order?: OrderData; setRefresh: any }> = ({ order, setRefresh }) => {
+  const [isRead, setIsRead] = useState<boolean | undefined>(!order?.isNew);
 
   // useEffect(() => {
   //   return;
   // }, [isRead]);
-  if (
-    !order ||
-    (order.foodItems.length === 0 &&
-      order.travelItem.length === 0 &&
-      order.stayItem.length === 0)
-  ) {
+  if (!order || (order.foodItems.length === 0 && order.travelItem.length === 0 && order.stayItem.length === 0)) {
     return (
       <Card className="w-full max-w-3xl mx-auto">
         <CardHeader>
@@ -31,16 +26,13 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
     );
   }
 
-  const { customerInfo, stayItem, travelItem, foodItems, isNew, orderId } =
-    order;
+  const { customerInfo, stayItem, travelItem, foodItems, isNew, orderId } = order;
 
   return (
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Order Details</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Phone: {customerInfo.phone}
-        </p>
+        <p className="text-sm text-muted-foreground">Phone: {customerInfo.phone}</p>
         <div className="flex flex-col space-y-1.5 max-w-fit">
           <Label htmlFor="availability">Order Reviewed</Label>
           <Switch
@@ -48,6 +40,7 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
             name="availability"
             checked={isRead}
             onCheckedChange={(bool) => {
+              setRefresh((prev: boolean) => !prev);
               setIsRead(bool);
               updateOrderRead(orderId, bool);
             }}
@@ -64,28 +57,20 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <p className="text-sm font-medium">Check-in</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.checkIn.split(",").at(0)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.checkIn.split(",").at(0)}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Check-out</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.checkOut.split(",").at(0)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.checkOut.split(",").at(0)}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Guests</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.guests}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.guests}</p>
                 </div>
               </div>
               <div className="mt-2">
                 <Badge variant="secondary">{stayItem.at(0)?.name}</Badge>
-                <span className="ml-2 text-sm font-medium">
-                  ${stayItem.at(0)?.price}
-                </span>
+                <span className="ml-2 text-sm font-medium">${stayItem.at(0)?.price}</span>
               </div>
             </section>
           </div>
@@ -100,28 +85,20 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <p className="text-sm font-medium">Destination</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.destination}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.destination}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Pick-up</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.pickUp.split(",").at(0)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.pickUp.split(",").at(0)}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Drop-off</p>
-                  <p className="text-sm text-muted-foreground">
-                    {customerInfo.dropDown.split(",").at(0)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{customerInfo.dropDown.split(",").at(0)}</p>
                 </div>
               </div>
               <div className="mt-2">
                 <Badge variant="secondary">{travelItem.at(0)?.name}</Badge>
-                <span className="ml-2 text-sm font-medium">
-                  ${travelItem.at(0)?.price}
-                </span>
+                <span className="ml-2 text-sm font-medium">${travelItem.at(0)?.price}</span>
               </div>
             </section>
           </div>
@@ -134,22 +111,13 @@ const CustomerOrderDisplay: React.FC<{ order?: OrderData }> = ({ order }) => {
               <h2 id="food-info" className="text-xl font-semibold mb-2">
                 Food Information
               </h2>
-              <p className="text-sm font-medium mb-2">
-                Food Date: {customerInfo.foodDate.split(",").at(0)}
-              </p>
+              <p className="text-sm font-medium mb-2">Food Date: {customerInfo.foodDate.split(",").at(0)}</p>
               <ul className="space-y-2">
                 {foodItems.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex justify-between items-center"
-                  >
+                  <li key={item.id} className="flex justify-between items-center">
                     <div>
                       <Badge variant="secondary">{item.name}</Badge>
-                      {item.category === "food" && (
-                        <span className="ml-2 text-sm text-muted-foreground">
-                          x{item.itemCount}
-                        </span>
-                      )}
+                      {item.category === "food" && <span className="ml-2 text-sm text-muted-foreground">x{item.itemCount}</span>}
                     </div>
                     <span className="text-sm font-medium">${item.price}</span>
                   </li>
