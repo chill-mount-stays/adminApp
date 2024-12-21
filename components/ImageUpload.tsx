@@ -129,7 +129,7 @@ export const ImageUpload = ({
   const removeImage = async (index: number, imageId: string) => {
     setDisableDeploy(true);
     const removeImageStatusCode = await removeImageFromFirebase(imageId);
-    if (!removeImageStatusCode) {
+    if (removeImageStatusCode) {
       setImages((prev) => prev.filter((_, i) => i !== index));
       setImageUrls((prev) => prev.filter((_, i) => i !== index));
     }
@@ -138,55 +138,51 @@ export const ImageUpload = ({
 
   return (
     <div className="h-full">
-      {
-        <div className="flex flex-col items-center gap-8 h-full">
-          <Card className="w-full border-0 rounded-none shadow-none">
-            <CardContent className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg p-10 space-y-6">
-              <p className=" text-muted-foreground text-sm">
-                Drag and drop your images or click the button below to select
-                files.
-              </p>
-              <CloudUploadIcon
-                className="w-16 h-16 text-zinc-500 dark:text-zinc-400"
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setFileEnter(true);
-                }}
-                onDragLeave={(e) => {
-                  setFileEnter(false);
-                }}
-                onDragEnd={(e) => {
-                  e.preventDefault();
-                  setFileEnter(false);
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setFileEnter(false);
-                  handleImagesDrop(e);
-                }}
-              />
-              <Label
-                className="cursor-pointer text-center border py-2.5 px-4 rounded-md shadow-sm hover:bg-zinc-50"
-                htmlFor="picture"
-              >
-                Select Files
-              </Label>
-              <Input
-                onChange={handleImageChange}
-                className="cursor-pointer hidden"
-                multiple
-                id="picture"
-                type="file"
-              />
-            </CardContent>
-          </Card>
-          {images.length ? (
-            <ImagePreview images={images} removeImage={removeImage} />
-          ) : (
-            <></>
-          )}
-        </div>
-      }
+      <div className="flex flex-col items-center gap-8 h-full">
+        <Card className="w-full border-0 rounded-none shadow-none">
+          <CardContent className="flex flex-col items-center justify-center border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg p-10 space-y-6">
+            <p className=" text-muted-foreground text-sm">
+              Drag and drop your images or click the button below to select
+              files.
+            </p>
+            <CloudUploadIcon
+              className="w-16 h-16 text-zinc-500 dark:text-zinc-400"
+              onDragOver={(e) => {
+                e.preventDefault();
+                setFileEnter(true);
+              }}
+              onDragLeave={(e) => {
+                setFileEnter(false);
+              }}
+              onDragEnd={(e) => {
+                e.preventDefault();
+                setFileEnter(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setFileEnter(false);
+                handleImagesDrop(e);
+              }}
+            />
+            <Label
+              className="cursor-pointer text-center border py-2.5 px-4 rounded-md shadow-sm hover:bg-zinc-50"
+              htmlFor="picture"
+            >
+              Select Files
+            </Label>
+            <Input
+              onChange={handleImageChange}
+              className="cursor-pointer hidden"
+              multiple
+              id="picture"
+              type="file"
+            />
+          </CardContent>
+        </Card>
+        {images.length > 0 && (
+          <ImagePreview images={images} removeImage={removeImage} />
+        )}
+      </div>
     </div>
   );
 };

@@ -30,4 +30,6 @@ export type OrderData = {
   travelItem: CartItem[];
   foodItems: CartItem[];
   bookingDate: string;
+  isNew: boolean;
+  orderId: string;
 };

@@ -14,10 +14,11 @@ import { DBImageFile, ImageFile, StayVendor, StayVendorDetails } from "@/type";
 import { Switch } from "./ui/switch";
 import { Textarea } from "./ui/textarea";
 import { ImageUpload } from "./ImageUpload";
-import { addFormData, generateDocRef } from "@/app/action";
+import { addFormData, generateDocRef, removeRecordFromDB } from "@/app/action";
 import { DocumentReference } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "./DatePicker";
 const StaysForm = ({ formData, vendorDetailsData }: any) => {
   const router = useRouter();
   const [docRef, setDocRef] = useState<DocumentReference>(
@@ -25,7 +26,7 @@ const StaysForm = ({ formData, vendorDetailsData }: any) => {
   );
   const { toast } = useToast();
   const InitialStayForm: StayVendor = {
-    vendorId: docRef.id,
+    vendorId: "",
     name: "",
     price: 0,
     availability: false,
@@ -95,11 +96,8 @@ const StaysForm = ({ formData, vendorDetailsData }: any) => {
     if (!submitData) {
       setResetForm(2);
       setDocRef(generateDocRef("Stays"));
-      setStayForm({ ...InitialStayForm, vendorId: docRef.id });
-      setStayVendorDetails({
-        ...InitialStayDetails,
-        vendorId: stayForm.vendorId,
-      });
+      setStayForm(InitialStayForm);
+      setStayVendorDetails(InitialStayDetails);
       toast({
         title: "Successfully done",
       });
@@ -117,11 +115,8 @@ const StaysForm = ({ formData, vendorDetailsData }: any) => {
   const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     setResetForm(1);
     setDocRef(generateDocRef("Stays"));
-    setStayForm({ ...InitialStayForm, vendorId: docRef.id });
-    setStayVendorDetails({
-      ...InitialStayDetails,
-      vendorId: stayForm.vendorId,
-    });
+    setStayForm(InitialStayForm);
+    setStayVendorDetails(InitialStayDetails);
   };
 
   return (
@@ -175,13 +170,16 @@ const StaysForm = ({ formData, vendorDetailsData }: any) => {
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="nextAvailability">Next Availability</Label>
-                  <Input
-                    id="nextAvailability"
-                    type="text"
-                    name="nextAvailability"
+                  <DatePicker
                     value={stayForm.nextAvailability}
-                    onChange={handleChange}
-                    placeholder="In hours & mins"
+                    onChange={(date) =>
+                      setStayForm((prev) => {
+                        return {
+                          ...prev,
+                          nextAvailability: date.toLocaleString("en-IN"),
+                        };
+                      })
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between space-x-4">

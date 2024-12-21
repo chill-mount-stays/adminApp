@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -37,6 +38,7 @@ export function StayVendorModal({
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>{vendor.name}</DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
         </DialogHeader>
         <div className="grid gap-4">
           <ImageCarousel images={vendor.imgUrls} />

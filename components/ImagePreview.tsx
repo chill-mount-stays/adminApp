@@ -11,11 +11,6 @@ import {
   CarouselNext,
 } from "./ui/carousel";
 
-// interface ImageFile extends File {
-//   preview: string;
-//   storagePath?: string;
-// }
-
 interface ImagePreviewProps {
   images?: DBImageFile[];
   removeImage: (index: number, imageId: string) => Promise<void>;
@@ -27,6 +22,7 @@ export default function ImagePreview({
 }: ImagePreviewProps) {
   if (!images || images.length === 0) return null;
   const [imgIdx, setImgIndex] = useState(1);
+
   return (
     <Carousel className="w-full max-w-md mx-auto">
       <CarouselContent className="border-red-50">
@@ -41,6 +37,7 @@ export default function ImagePreview({
                 alt={image.imageId}
                 layout="fill"
                 objectFit="contain"
+                sizes="100%"
               />
             </div>
           </CarouselItem>

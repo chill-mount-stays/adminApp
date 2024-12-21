@@ -4,11 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { StarIcon } from "lucide-react";
+import { StarIcon, Trash } from "lucide-react";
 import { StayVendorModal } from "./StayVendorModal";
 import { Food, StayVendor, TravelVendor } from "@/type";
-import StaysForm from "./StaysForm";
-
+import { removeRecordFromDB } from "@/app/action";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 export function StayVendorCard({
   vendor,
   type,
@@ -16,35 +17,79 @@ export function StayVendorCard({
   vendor: StayVendor | TravelVendor | Food;
   type: string;
 }) {
+  const { toast } = useToast();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log(vendor);
-
   const isStayVendor = (vendor: any): vendor is StayVendor => type === "stay";
   const isTravelVendor = (vendor: any): vendor is TravelVendor =>
     type === "travel";
   const isFood = (vendor: any): vendor is Food => type === "food";
 
+  const handleRemoveRecord = async () => {
+    const storagePaths = vendor.imgUrls.map((image) => image.imageId);
+    let isRecordDeleted;
+    if (isStayVendor(vendor)) {
+      isRecordDeleted = await removeRecordFromDB(
+        storagePaths,
+        vendor.vendorId,
+        "Stays",
+        vendor.vendorsRefId
+      );
+    } else if (isTravelVendor(vendor)) {
+      isRecordDeleted = await removeRecordFromDB(
+        storagePaths,
+        vendor.vendorId,
+        "Travels",
+        vendor.vendorsRefId
+      );
+    } else {
+      isRecordDeleted = await removeRecordFromDB(
+        storagePaths,
+        vendor.foodId,
+        "Foods"
+      );
+    }
+    if (isRecordDeleted) {
+      router.refresh();
+      toast({
+        title: "Recor Removed!",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete the record.",
+      });
+    }
+  };
+
   return (
     <>
-      <Card
-        className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg w-full max-w-2xl mx-auto"
-        onClick={() => setIsModalOpen(true)}
-      >
+      <Card className="overflow-hidden cursor-pointer transition-shadow hover:shadow-lg w-full max-w-2xl mx-auto">
         <CardContent className="p-0">
           <div className="flex flex-col md:flex-row h-full">
             <div className="relative w-full md:w-2/5 min-h-48 md:h-auto">
               <Image
                 src={vendor.imgUrls[0]?.firebaseUrl || "/placeholder.svg"}
                 alt={vendor.name}
-                layout="fill"
                 sizes="100%"
-                objectFit="cover"
+                width={500}
+                height={500}
+                style={{ objectFit: "cover" }}
                 priority
               />
             </div>
             <div className="flex flex-col justify-between p-4 md:w-3/5">
               <div>
-                <h3 className="text-lg font-semibold mb-2">{vendor.name}</h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold mb-2">{vendor.name}</h3>
+                  <Button
+                    size={"sm"}
+                    variant={"destructive"}
+                    onClick={handleRemoveRecord}
+                  >
+                    <Trash />
+                  </Button>
+                </div>
                 {isTravelVendor(vendor) && (
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                     {vendor.travelOption}
@@ -86,7 +131,9 @@ export function StayVendorCard({
                     )}
                   </div>
                 )}
-                <Button variant="outline">View Details</Button>
+                <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+                  View Details
+                </Button>
               </div>
             </div>
           </div>

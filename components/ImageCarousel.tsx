@@ -25,6 +25,7 @@ export function ImageCarousel({ images }: ImageCarouselProps) {
                 alt="Stay vendor image"
                 layout="fill"
                 objectFit="cover"
+                sizes="100%"
               />
             </div>
           </CarouselItem>

@@ -19,6 +19,7 @@ import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "./DatePicker";
 const TravelsForm = ({ formData, vendorDetailsData }: any) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -26,7 +27,7 @@ const TravelsForm = ({ formData, vendorDetailsData }: any) => {
     generateDocRef("Travels")
   );
   const InitialTravelForm: TravelVendor = {
-    vendorId: docRef.id,
+    vendorId: "",
     name: "",
     travelOption: "Non-AC",
     costPerDay: 0,
@@ -98,15 +99,12 @@ const TravelsForm = ({ formData, vendorDetailsData }: any) => {
     if (!submitData) {
       setResetForm(2);
       setDocRef(generateDocRef("Travels"));
-      setTravelForm({ ...InitialTravelForm, vendorId: docRef.id });
-      setTravelVendorDetails({
-        ...InitialTravelDetails,
-        vendorId: travelForm.vendorId,
-      });
+      setTravelForm(InitialTravelForm);
+      setTravelVendorDetails(InitialTravelDetails);
       toast({
         title: "Successfully done",
       });
-      router.push("/stays");
+      router.push("/travels");
     } else {
       toast({
         variant: "destructive",
@@ -121,11 +119,8 @@ const TravelsForm = ({ formData, vendorDetailsData }: any) => {
   const handleFormReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     setResetForm(1);
     setDocRef(generateDocRef("Travels"));
-    setTravelForm({ ...InitialTravelForm, vendorId: docRef.id });
-    setTravelVendorDetails({
-      ...InitialTravelDetails,
-      vendorId: travelForm.vendorId,
-    });
+    setTravelForm({ ...InitialTravelForm });
+    setTravelVendorDetails(InitialTravelDetails);
   };
 
   return (
@@ -181,13 +176,16 @@ const TravelsForm = ({ formData, vendorDetailsData }: any) => {
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="nextAvailability">Next Availability</Label>
-                  <Input
-                    id="nextAvailability"
-                    type="text"
-                    name="nextAvailability"
+                  <DatePicker
                     value={travelForm.nextAvailability}
-                    onChange={handleChange}
-                    placeholder="In hours & mins"
+                    onChange={(date) =>
+                      setTravelForm((prev) => {
+                        return {
+                          ...prev,
+                          nextAvailability: date.toLocaleString("en-IN"),
+                        };
+                      })
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between space-x-4">

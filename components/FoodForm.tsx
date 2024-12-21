@@ -19,6 +19,7 @@ import { DocumentReference } from "firebase/firestore";
 import { ImageUpload } from "./ImageUpload";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "./DatePicker";
 
 const FoodForm = ({ foodData }: any) => {
   const [docRef, setDocRef] = useState<DocumentReference>(
@@ -26,7 +27,7 @@ const FoodForm = ({ foodData }: any) => {
   );
   const { toast } = useToast();
   const InitialFoodForm: Food = {
-    foodId: docRef.id,
+    foodId: "",
     name: "",
     description: "",
     price: 0,
@@ -68,12 +69,13 @@ const FoodForm = ({ foodData }: any) => {
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDisableDeploy(true);
+    console.log(foodForm, docRef.id);
     const submitData = await addFoodFormData(docRef, foodForm);
     setDisableDeploy(false);
     if (!submitData) {
       setResetForm(2);
       setDocRef(generateDocRef("Foods"));
-      setFoodForm({ ...InitialFoodForm, foodId: docRef.id });
+      setFoodForm(InitialFoodForm);
       toast({
         title: "Successfully done",
       });
@@ -90,7 +92,7 @@ const FoodForm = ({ foodData }: any) => {
   function handleFormReset(e: React.MouseEvent<HTMLButtonElement>): void {
     setResetForm(1);
     setDocRef(generateDocRef("Foods"));
-    setFoodForm({ ...InitialFoodForm, foodId: docRef.id });
+    setFoodForm(InitialFoodForm);
   }
 
   return (
@@ -144,13 +146,16 @@ const FoodForm = ({ foodData }: any) => {
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <Label htmlFor="nextAvailability">Next Availability</Label>
-                  <Input
-                    id="nextAvailability"
-                    type="text"
-                    name="nextAvailability"
+                  <DatePicker
                     value={foodForm.nextAvailability}
-                    onChange={handleChange}
-                    placeholder="In hours & mins"
+                    onChange={(date) =>
+                      setFoodForm((prev) => {
+                        return {
+                          ...prev,
+                          nextAvailability: date.toLocaleString("en-IN"),
+                        };
+                      })
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between space-x-4">
