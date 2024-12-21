@@ -19,7 +19,7 @@ export const OrdersTableWithPopup = () => {
 
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // You can adjust this value as needed
+  const itemsPerPage = 10; // You can adjust this value as needed
   const [refresh, setRefresh] = useState(false);
 
   const handleRowClick = (order: OrderData) => {
