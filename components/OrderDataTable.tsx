@@ -13,7 +13,10 @@ interface OrdersTableWithPopupProps {
   orders: OrderData[];
 }
 
-export const OrdersTableWithPopup: React.FC<OrdersTableWithPopupProps> = ({ orders }) => {
+export const OrdersTableWithPopup = () => {
+  const [orders, setOrders] = useState<OrderData[]>([]);
+  // const orderDetails: any = await getOrderDetails();
+
   const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // You can adjust this value as needed
@@ -30,6 +33,10 @@ export const OrdersTableWithPopup: React.FC<OrdersTableWithPopupProps> = ({ orde
   useEffect(() => {
     console.log("~~>", orders);
   }, [orders]);
+
+  useEffect(() => {
+    getOrderDetails(setOrders);
+  }, [refresh]);
   // Calculate total pages
   const totalPages = Math.ceil(orders.length / itemsPerPage);
 
@@ -43,6 +50,13 @@ export const OrdersTableWithPopup: React.FC<OrdersTableWithPopupProps> = ({ orde
 
   return (
     <div className="space-y-4 min-h-[500px] flex flex-col justify-between">
+      <Button
+        onClick={() => {
+          setRefresh((prev) => !prev);
+        }}
+      >
+        Refresh
+      </Button>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
