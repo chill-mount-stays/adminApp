@@ -92,7 +92,7 @@ export const getData = async (collectionName: string) => {
   const data: any = [];
   querySnapshot.forEach((doc) => {
     data.push(doc.data());
-    console.log(doc.id, " => ", doc.data());
+    // console.log(doc.id, " => ", doc.data());
   });
   return data;
 };

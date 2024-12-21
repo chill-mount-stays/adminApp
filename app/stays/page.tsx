@@ -3,6 +3,7 @@ import { getData } from "../action";
 import { StayVendor } from "@/type";
 import { StayVendorCard } from "@/components/StayVendorCard";
 import NoResultFound from "@/components/NoResultFound";
+export const dynamic = "force-dynamic";
 
 const page = async () => {
   const vendorsData: any = await getData("Stays");

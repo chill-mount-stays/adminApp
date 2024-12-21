@@ -1,5 +1,6 @@
 import { OrdersTableWithPopup } from "@/components/OrderDataTable";
 import { getOrderDetails } from "../action";
+export const dynamic = "force-dynamic";
 
 const page = async () => {
   const orderDetails: any = await getOrderDetails();
